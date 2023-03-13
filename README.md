@@ -2,7 +2,7 @@
 
 Backend for BUPT Subject Education Platform using Golang and Docker
 
-This is an **ongoing** and unreviewed project that may have severe security flaws.
+This is an **ongoing** project.
 
 # Usage
 
