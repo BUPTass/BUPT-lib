@@ -1,0 +1,24 @@
+version: "3.7"
+services:
+  mongodb_container:
+    image: mongo:latest
+    environment:
+      DUMMY: dummy
+      #MONGO_INITDB_ROOT_USERNAME: root
+      #MONGO_INITDB_ROOT_PASSWORD: password
+    volumes:
+      - mongodb_data_container:/data/db
+      - ./mongo.conf:/etc/mongo/mongo.conf
+  bubble_app:
+    build: .
+    command: sh -c "./web"
+    depends_on:
+      - mongodb_container
+    ports:
+      - "1323:1323"
+
+volumes:
+  mongodb_data_container:
+networks:
+  default:
+    driver: bridge
