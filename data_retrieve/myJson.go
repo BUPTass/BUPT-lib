@@ -44,6 +44,9 @@ func GetAllDocumentsAsJson(collection *mongo.Collection) ([]byte, error) {
 		log.Println(err)
 		return nil, err
 	}
+	if string(jsonBytes) == "null" {
+		jsonBytes = []byte("[]")
+	}
 	return jsonBytes, nil
 }
 
