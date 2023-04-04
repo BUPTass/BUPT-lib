@@ -20,7 +20,7 @@ func GetAllDocumentsAsJson(collection *mongo.Collection) ([]byte, error) {
 	// Retrieve all documents from the collection.
 	cursor, err := collection.Find(context.Background(), bson.D{{}}, findOptions)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		return nil, err
 	}
 	defer cursor.Close(context.Background())
@@ -30,7 +30,7 @@ func GetAllDocumentsAsJson(collection *mongo.Collection) ([]byte, error) {
 	for cursor.Next(context.Background()) {
 		var document map[string]interface{}
 		if err := cursor.Decode(&document); err != nil {
-			log.Fatal(err)
+			log.Println(err)
 			return nil, err
 		}
 		documents = append(documents, document)
@@ -41,7 +41,7 @@ func GetAllDocumentsAsJson(collection *mongo.Collection) ([]byte, error) {
 	// Marshal the documents into JSON.
 	jsonBytes, err := json.Marshal(documents)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		return nil, err
 	}
 	return jsonBytes, nil

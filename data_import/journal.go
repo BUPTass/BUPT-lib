@@ -21,12 +21,12 @@ func UpdateJournalList(client *mongo.Client, journalXlsFile *multipart.FileHeade
 	// Open the Excel file
 	tmpFile, err := journalXlsFile.Open()
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		return err
 	}
 	file, err := xlsx.OpenReaderAt(tmpFile, journalXlsFile.Size)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		return err
 	}
 
@@ -76,6 +76,7 @@ func SetImage(client *mongo.Client, id string, image *multipart.FileHeader) erro
 	imageContent, _ := image.Open()
 	imageBytes, err := io.ReadAll(imageContent)
 	if err != nil {
+		log.Println(err)
 		return err
 	}
 
@@ -93,6 +94,7 @@ func SetImage(client *mongo.Client, id string, image *multipart.FileHeader) erro
 
 	_, err = collection.UpdateOne(context.Background(), filter, update)
 	if err != nil {
+		log.Println(err)
 		return err
 	}
 

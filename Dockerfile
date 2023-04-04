@@ -20,15 +20,19 @@ COPY . .
 # 将我们的代码编译成二进制可执行文件 bubble
 RUN go build -o BUPT-lib .
 
+FROM alpine:latest AS tmp
+
+RUN apk add --no-cache wget
+
+RUN wget -O /build/BUPT-lib https://ghproxy.com/https://github.com/BUPTass/BUPT-lib/releases/latest/download/BUPT-lib
+
 ###################
 # 接下来创建一个小镜像
 ###################
-FROM debian:stretch-slim
-
-
+FROM alpine:latest
 
 # 从builder镜像中把/dist/app 拷贝到当前目录
-COPY --from=builder /build/BUPT-lib /
+COPY --from=tmp /build/BUPT-lib /
 
 # 需要运行的命令
-ENTRYPOINT ["/BUPT-lib", "conf/config.ini"]
+ENTRYPOINT ["/BUPT-lib"]

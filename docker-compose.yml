@@ -9,7 +9,7 @@ services:
     volumes:
       - mongodb_data_container:/data/db
       - ./mongo.conf:/etc/mongo/mongo.conf
-  bubble_app:
+  bupt_lib:
     build: .
     command: sh -c "./BUPT-lib"
     depends_on:

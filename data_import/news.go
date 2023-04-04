@@ -43,6 +43,7 @@ func UpdateNews(client *mongo.Client, jsonText string) error {
 	var updatedNews News
 	err := json.Unmarshal([]byte(jsonText), &updatedNews)
 	if err != nil {
+		log.Println(err)
 		return err
 	}
 
@@ -52,6 +53,7 @@ func UpdateNews(client *mongo.Client, jsonText string) error {
 
 	_, err = collection.UpdateOne(context.Background(), filter, update)
 	if err != nil {
+		log.Println(err)
 		return err
 	}
 	return nil
@@ -71,6 +73,7 @@ func GetAnnouncement(client *mongo.Client, num int) ([]byte, error) {
 
 	cur, err := collection.Find(context.Background(), filter, opts)
 	if err != nil {
+		log.Println(err)
 		return nil, err
 	}
 	defer cur.Close(context.Background())
@@ -87,6 +90,7 @@ func GetAnnouncement(client *mongo.Client, num int) ([]byte, error) {
 
 		err := cur.Decode(&news)
 		if err != nil {
+			log.Println(err)
 			return nil, err
 		}
 		reduced := struct {
@@ -101,11 +105,12 @@ func GetAnnouncement(client *mongo.Client, num int) ([]byte, error) {
 		newsList = append(newsList, reduced)
 	}
 	if err := cur.Err(); err != nil {
+		log.Println(err)
 		return nil, err
 	}
 	jsonBytes, err := json.Marshal(newsList)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		return nil, err
 	}
 	return jsonBytes, nil
@@ -115,6 +120,7 @@ func AddAnnouncement(client *mongo.Client, news *multipart.FileHeader) error {
 	collection := client.Database("test").Collection("Announcement")
 	data, err := ParseNewsAnnouncement(news)
 	if err != nil {
+		log.Println(err)
 		return err
 	}
 
@@ -126,6 +132,7 @@ func AddAnnouncement(client *mongo.Client, news *multipart.FileHeader) error {
 	}
 
 	if err != nil {
+		log.Println(err)
 		return err
 	}
 	return nil
@@ -135,7 +142,7 @@ func ParseNewsAnnouncement(newsFile *multipart.FileHeader) ([]News, error) {
 	// Open the Excel file
 	tmpFile, err := newsFile.Open()
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		return nil, err
 	}
 	// Parse CSV file
@@ -144,6 +151,7 @@ func ParseNewsAnnouncement(newsFile *multipart.FileHeader) ([]News, error) {
 	reader.FieldsPerRecord = -1
 	records, err := reader.ReadAll()
 	if err != nil {
+		log.Println(err)
 		return nil, err
 	}
 	var data []News
@@ -183,6 +191,7 @@ func GetNews(client *mongo.Client, num int) ([]byte, error) {
 
 	cur, err := collection.Find(context.Background(), filter, opts)
 	if err != nil {
+		log.Println(err)
 		return nil, err
 	}
 	defer cur.Close(context.Background())
@@ -199,6 +208,7 @@ func GetNews(client *mongo.Client, num int) ([]byte, error) {
 
 		err := cur.Decode(&news)
 		if err != nil {
+			log.Println(err)
 			return nil, err
 		}
 		reduced := struct {
@@ -213,11 +223,12 @@ func GetNews(client *mongo.Client, num int) ([]byte, error) {
 		newsList = append(newsList, reduced)
 	}
 	if err := cur.Err(); err != nil {
+		log.Println(err)
 		return nil, err
 	}
 	jsonBytes, err := json.Marshal(newsList)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		return nil, err
 	}
 	return jsonBytes, nil
@@ -227,17 +238,20 @@ func AddNews(client *mongo.Client, news *multipart.FileHeader) error {
 	collection := client.Database("test").Collection("News")
 	data, err := ParseNews(news)
 	if err != nil {
+		log.Println(err)
 		return err
 	}
 
 	for _, data_ := range data {
 		_, err = collection.InsertOne(context.Background(), data_)
 		if err != nil {
+			log.Println(err)
 			return err
 		}
 	}
 
 	if err != nil {
+		log.Println(err)
 		return err
 	}
 	return nil
@@ -247,7 +261,7 @@ func ParseNews(newsFile *multipart.FileHeader) ([]News, error) {
 	// Open the Excel file
 	tmpFile, err := newsFile.Open()
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		return nil, err
 	}
 	// Parse CSV file
@@ -301,6 +315,7 @@ func AddOngoingConferences(client *mongo.Client, conf *multipart.FileHeader) err
 	collection := client.Database("test").Collection("OngoingConf")
 	data, err := ParseOngoingConferences(conf)
 	if err != nil {
+		log.Println(err)
 		return err
 	}
 
@@ -308,11 +323,13 @@ func AddOngoingConferences(client *mongo.Client, conf *multipart.FileHeader) err
 	for _, data_ := range data {
 		_, err = collection.InsertOne(context.Background(), data_)
 		if err != nil {
+			log.Println(err)
 			return err
 		}
 	}
 
 	if err != nil {
+		log.Println(err)
 		return err
 	}
 	return nil
@@ -322,7 +339,7 @@ func ParseOngoingConferences(newsFile *multipart.FileHeader) ([]Conference, erro
 
 	tmpFile, err := newsFile.Open()
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		return nil, err
 	}
 	// Parse CSV file
@@ -331,6 +348,7 @@ func ParseOngoingConferences(newsFile *multipart.FileHeader) ([]Conference, erro
 	reader.FieldsPerRecord = -1
 	records, err := reader.ReadAll()
 	if err != nil {
+		log.Println(err)
 		return nil, err
 	}
 	var data []Conference
@@ -365,6 +383,7 @@ func GetLibNews(client *mongo.Client, num int, newsType uint8) ([]byte, error) {
 
 	cur, err := collection.Find(context.Background(), filter, opts)
 	if err != nil {
+		log.Println(err)
 		return nil, err
 	}
 	defer cur.Close(context.Background())
@@ -381,6 +400,7 @@ func GetLibNews(client *mongo.Client, num int, newsType uint8) ([]byte, error) {
 
 		err := cur.Decode(&news)
 		if err != nil {
+			log.Println(err)
 			return nil, err
 		}
 		reduced := struct {
@@ -395,11 +415,12 @@ func GetLibNews(client *mongo.Client, num int, newsType uint8) ([]byte, error) {
 		newsList = append(newsList, reduced)
 	}
 	if err := cur.Err(); err != nil {
+		log.Println(err)
 		return nil, err
 	}
 	jsonBytes, err := json.Marshal(newsList)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		return nil, err
 	}
 	return jsonBytes, nil
@@ -409,12 +430,14 @@ func AddLibNews(client *mongo.Client, news *multipart.FileHeader, newsType uint8
 	collection := client.Database("test").Collection("News")
 	data, err := ParseLibNews(news, newsType)
 	if err != nil {
+		log.Println(err)
 		return err
 	}
 
 	for _, data_ := range data {
 		_, err = collection.InsertOne(context.Background(), data_)
 		if err != nil {
+			log.Println(err)
 			return err
 		}
 	}
@@ -426,7 +449,7 @@ func ParseLibNews(newsFile *multipart.FileHeader, newsType uint8) ([]News, error
 	// Open the Excel file
 	tmpFile, err := newsFile.Open()
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		return nil, err
 	}
 	// Parse CSV file
@@ -435,6 +458,7 @@ func ParseLibNews(newsFile *multipart.FileHeader, newsType uint8) ([]News, error
 	reader.FieldsPerRecord = -1
 	records, err := reader.ReadAll()
 	if err != nil {
+		log.Println(err)
 		return nil, err
 	}
 	var data []News

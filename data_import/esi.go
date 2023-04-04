@@ -71,6 +71,7 @@ func AddESI(client *mongo.Client, title string, EsiFile *multipart.FileHeader, n
 
 	_, err = collection.InsertOne(context.Background(), document)
 	if err != nil {
+		log.Println(err)
 		return err
 	}
 	return nil
@@ -101,12 +102,10 @@ func ParseESIHot(EsiFile *multipart.FileHeader) ([]interface{}, error) {
 	// Open the Excel file
 	tmpFile, err := EsiFile.Open()
 	if err != nil {
-		log.Fatal(err)
 		return nil, err
 	}
 	file, err := xlsx.OpenReaderAt(tmpFile, EsiFile.Size)
 	if err != nil {
-		log.Fatal(err)
 		return nil, err
 	}
 
@@ -171,11 +170,13 @@ func AddIncites(client *mongo.Client, title string, IncitesFile *multipart.FileH
 
 	fileUri, err := Asset.UploadFile(IncitesFile)
 	if err != nil {
+		log.Println(err)
 		return err
 	}
 
 	data, err := ParseIncites(IncitesFile)
 	if err != nil {
+		log.Println(err)
 		return err
 	}
 
@@ -188,6 +189,7 @@ func AddIncites(client *mongo.Client, title string, IncitesFile *multipart.FileH
 
 	_, err = collection.InsertOne(context.Background(), document)
 	if err != nil {
+		log.Println(err)
 		return err
 	}
 	return nil
@@ -197,7 +199,7 @@ func ParseIncites(IncitesFile *multipart.FileHeader) ([]IncitesRow, error) {
 	// Open the Excel file
 	tmpFile, err := IncitesFile.Open()
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		return nil, err
 	}
 	// Parse CSV file
