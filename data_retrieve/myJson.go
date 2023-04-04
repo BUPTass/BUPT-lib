@@ -35,7 +35,9 @@ func GetAllDocumentsAsJson(collection *mongo.Collection) ([]byte, error) {
 		}
 		documents = append(documents, document)
 	}
-	sortMapsByIndex(documents, "序号")
+	if documents[0]["序号"] != nil {
+		sortMapsByIndex(documents, "序号")
+	}
 	// Marshal the documents into JSON.
 	jsonBytes, err := json.Marshal(documents)
 	if err != nil {

@@ -48,9 +48,9 @@ type IncitesRow struct {
 	PopularPapers       int     `bson:"热门论文"`
 }
 
-func AddESI(client *mongo.Client, title string, EsiFile *multipart.FileHeader) error {
+func AddESI(client *mongo.Client, title string, EsiFile *multipart.FileHeader, name string) error {
 	// Connect to MongoDB
-	collection := client.Database("test").Collection("ESI")
+	collection := client.Database("test").Collection(name)
 
 	fileUri, err := Asset.UploadFile(EsiFile)
 	if err != nil {
@@ -76,13 +76,13 @@ func AddESI(client *mongo.Client, title string, EsiFile *multipart.FileHeader) e
 	return nil
 }
 
-func GetEsi(client *mongo.Client) ([]byte, error) {
-	collection := client.Database("test").Collection("ESI")
+func GetEsi(client *mongo.Client, name string) ([]byte, error) {
+	collection := client.Database("test").Collection(name)
 	return myJson.GetAllDocumentsAsJson(collection)
 }
 
-func DeleteEsi(client *mongo.Client, id string) error {
-	collection := client.Database("test").Collection("ESI")
+func DeleteEsi(client *mongo.Client, id string, name string) error {
+	collection := client.Database("test").Collection(name)
 	filter := bson.M{"_id": id}
 	projection := bson.M{"_id": 0, "filename": 1}
 	findOptions := options.FindOneOptions{Projection: projection}
