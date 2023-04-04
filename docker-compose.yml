@@ -11,7 +11,7 @@ services:
       - ./mongo.conf:/etc/mongo/mongo.conf
   bubble_app:
     build: .
-    command: sh -c "./web"
+    command: sh -c "./BUPT-lib"
     depends_on:
       - mongodb_container
     ports:

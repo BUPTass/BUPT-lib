@@ -14,7 +14,7 @@ import (
 )
 
 func main() {
-	mongoClient := ConnectToMongodb("mongodb://127.0.0.1:27017")
+	mongoClient := ConnectToMongodb("mongodb://mongodb_container:27017")
 	e := echo.New()
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "BUPT Library API backend")
