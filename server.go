@@ -11,14 +11,17 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
 	"net/http"
+	"strconv"
 )
 
 func main() {
-	mongoClient := ConnectToMongodb("mongodb://mongodb_container:27017")
+	mongoClient := ConnectToMongodb("mongodb://127.0.0.1:27017")
 	e := echo.New()
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "BUPT Library API backend")
 	})
+	e.Static("/", "static")
+	e.Static("/static", "static")
 	e.GET("/journals", func(c echo.Context) error {
 		collection := mongoClient.Database("test").Collection("Journals")
 		JournalJson, err := data_retrieve.GetAllDocumentsAsJson(collection)
@@ -59,7 +62,7 @@ func main() {
 		if err != nil {
 			return c.String(http.StatusNotFound, err.Error())
 		} else {
-			return c.Blob(http.StatusOK, "image/jpeg", image)
+			return c.String(http.StatusOK, image)
 		}
 	})
 	e.POST("/esi/highlycited", func(c echo.Context) error {
@@ -168,9 +171,15 @@ func main() {
 		}
 	})
 	e.GET("/news/announcement", func(c echo.Context) error {
-		num := utils.CastInt(c.FormValue("num"))
-
-		newsJson, err := news.GetAnnouncement(mongoClient, num)
+		num, err := strconv.Atoi(c.FormValue("num"))
+		if err != nil || num < 0 {
+			num = 10
+		}
+		start, err := strconv.Atoi(c.FormValue("start"))
+		if err != nil || start < 0 {
+			start = 0
+		}
+		newsJson, err := news.GetAnnouncement(mongoClient, uint(num), uint(start))
 
 		if err != nil {
 			return c.String(http.StatusInternalServerError, "Failed to retrieve")
@@ -192,9 +201,15 @@ func main() {
 		}
 	})
 	e.GET("/news/news", func(c echo.Context) error {
-		num := utils.CastInt(c.FormValue("num"))
-
-		newsJson, err := news.GetNews(mongoClient, num)
+		num, err := strconv.Atoi(c.FormValue("num"))
+		if err != nil || num < 0 {
+			num = 10
+		}
+		start, err := strconv.Atoi(c.FormValue("start"))
+		if err != nil || start < 0 {
+			start = 0
+		}
+		newsJson, err := news.GetNews(mongoClient, uint(num), uint(start))
 
 		if err != nil {
 			return c.String(http.StatusInternalServerError, "Failed to retrieve")
@@ -238,9 +253,15 @@ func main() {
 		}
 	})
 	e.GET("/news/news_lib_res", func(c echo.Context) error {
-		num := utils.CastInt(c.FormValue("num"))
-
-		newsJson, err := news.GetLibNews(mongoClient, num, 1)
+		num, err := strconv.Atoi(c.FormValue("num"))
+		if err != nil || num < 0 {
+			num = 10
+		}
+		start, err := strconv.Atoi(c.FormValue("start"))
+		if err != nil || start < 0 {
+			start = 0
+		}
+		newsJson, err := news.GetLibNews(mongoClient, uint(num), uint(start), 1)
 
 		if err != nil {
 			return c.String(http.StatusInternalServerError, "Failed to retrieve")
@@ -263,8 +284,15 @@ func main() {
 	})
 	e.GET("/news/news_lib_ann", func(c echo.Context) error {
 		num := utils.CastInt(c.FormValue("num"))
-
-		newsJson, err := news.GetLibNews(mongoClient, num, 2)
+		num, err := strconv.Atoi(c.FormValue("num"))
+		if err != nil || num < 0 {
+			num = 10
+		}
+		start, err := strconv.Atoi(c.FormValue("start"))
+		if err != nil || start < 0 {
+			start = 0
+		}
+		newsJson, err := news.GetLibNews(mongoClient, uint(num), uint(start), 2)
 
 		if err != nil {
 			return c.String(http.StatusInternalServerError, "Failed to retrieve")

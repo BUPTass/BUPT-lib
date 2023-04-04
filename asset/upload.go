@@ -1,17 +1,23 @@
 package asset
 
 import (
+	"fmt"
 	"io"
 	"log"
 	"mime/multipart"
 	"os"
+	"path/filepath"
+	"time"
 )
 
 func UploadFile(file *multipart.FileHeader) (string, error) {
 	// upload path
-	path := "./"
+	path := "./static/"
 
-	f, err := os.Create(path + file.Filename)
+	ext := filepath.Ext(file.Filename)
+	randomName := fmt.Sprintf("%d%s", time.Now().UnixNano(), ext)
+
+	f, err := os.Create(path + randomName)
 	if err != nil {
 		log.Println(err)
 		return "", err
@@ -23,12 +29,12 @@ func UploadFile(file *multipart.FileHeader) (string, error) {
 		log.Println(err)
 		return "", err
 	}
-	return path + file.Filename, nil
+	return "/static/" + randomName, nil
 }
 
 func DeleteFile(filename string) error {
 	// upload path
-	path := "./"
+	path := "./static/"
 	err := os.Remove(path + filename)
 	if err != nil {
 		log.Println(err)

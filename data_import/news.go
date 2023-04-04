@@ -59,17 +59,11 @@ func UpdateNews(client *mongo.Client, jsonText string) error {
 	return nil
 }
 
-func GetAnnouncement(client *mongo.Client, num int) ([]byte, error) {
+func GetAnnouncement(client *mongo.Client, num uint, start uint) ([]byte, error) {
 	collection := client.Database("test").Collection("Announcement")
 
 	filter := bson.M{}
 	opts := options.Find().SetSort(bson.M{"date": -1})
-
-	if !(num > 0 && num < 50) {
-		num = 50
-	}
-	// set the limit for number of news entries to retrieve
-	opts.SetLimit(int64(num))
 
 	cur, err := collection.Find(context.Background(), filter, opts)
 	if err != nil {
@@ -83,9 +77,11 @@ func GetAnnouncement(client *mongo.Client, num int) ([]byte, error) {
 		Date  string `json:"date"`
 		Url   string `json:"url"`
 	}, 0, num)
-
+	var itemCount uint
+	itemCount = 0
 	// iterate through the cursor and decode each document into a news entry struct
 	for cur.Next(context.Background()) {
+
 		var news News
 
 		err := cur.Decode(&news)
@@ -93,6 +89,14 @@ func GetAnnouncement(client *mongo.Client, num int) ([]byte, error) {
 			log.Println(err)
 			return nil, err
 		}
+		itemCount++
+		if itemCount < start+1 {
+			continue
+		}
+		if itemCount > num+start {
+			break
+		}
+
 		reduced := struct {
 			Title string `json:"title"`
 			Date  string `json:"date"`
@@ -176,18 +180,11 @@ func ParseNewsAnnouncement(newsFile *multipart.FileHeader) ([]News, error) {
 	return data, nil
 }
 
-func GetNews(client *mongo.Client, num int) ([]byte, error) {
+func GetNews(client *mongo.Client, num uint, start uint) ([]byte, error) {
 	collection := client.Database("test").Collection("News")
 
 	filter := bson.M{}
 	opts := options.Find().SetSort(bson.M{"time": -1})
-
-	if !(num > 0 && num < 50) {
-		num = 50
-	}
-
-	// set the limit for number of news entries to retrieve
-	opts.SetLimit(int64(num))
 
 	cur, err := collection.Find(context.Background(), filter, opts)
 	if err != nil {
@@ -201,7 +198,8 @@ func GetNews(client *mongo.Client, num int) ([]byte, error) {
 		Time  int64  `json:"time"`
 		Url   string `json:"url"`
 	}, 0, num)
-
+	var itemCount uint
+	itemCount = 0
 	// iterate through the cursor and decode each document into a news entry struct
 	for cur.Next(context.Background()) {
 		var news News
@@ -211,6 +209,14 @@ func GetNews(client *mongo.Client, num int) ([]byte, error) {
 			log.Println(err)
 			return nil, err
 		}
+		itemCount++
+		if itemCount < start+1 {
+			continue
+		}
+		if itemCount > num+start {
+			break
+		}
+
 		reduced := struct {
 			Title string `json:"title"`
 			Time  int64  `json:"time"`
@@ -369,17 +375,11 @@ func ParseOngoingConferences(newsFile *multipart.FileHeader) ([]Conference, erro
 	return data, nil
 }
 
-func GetLibNews(client *mongo.Client, num int, newsType uint8) ([]byte, error) {
+func GetLibNews(client *mongo.Client, num uint, start uint, newsType uint8) ([]byte, error) {
 	collection := client.Database("test").Collection("News")
 
 	filter := bson.M{"type": newsType}
 	opts := options.Find().SetSort(bson.M{"date": -1})
-
-	if !(num > 0 && num < 50) {
-		num = 50
-	}
-	// set the limit for number of news entries to retrieve
-	opts.SetLimit(int64(num))
 
 	cur, err := collection.Find(context.Background(), filter, opts)
 	if err != nil {
@@ -393,7 +393,8 @@ func GetLibNews(client *mongo.Client, num int, newsType uint8) ([]byte, error) {
 		Date  string `json:"date"`
 		Url   string `json:"url"`
 	}, 0, num)
-
+	var itemCount uint
+	itemCount = 0
 	// iterate through the cursor and decode each document into a news entry struct
 	for cur.Next(context.Background()) {
 		var news News
@@ -403,6 +404,14 @@ func GetLibNews(client *mongo.Client, num int, newsType uint8) ([]byte, error) {
 			log.Println(err)
 			return nil, err
 		}
+		itemCount++
+		if itemCount < start+1 {
+			continue
+		}
+		if itemCount > num+start {
+			break
+		}
+
 		reduced := struct {
 			Title string `json:"title"`
 			Date  string `json:"date"`

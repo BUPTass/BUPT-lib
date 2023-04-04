@@ -1,14 +1,13 @@
 package data
 
 import (
+	"BUPT-lib/asset"
 	"context"
 	"errors"
-	"github.com/tealeg/xlsx"           // library for reading excel files
-	"go.mongodb.org/mongo-driver/bson" // bson library for marshalling data
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"github.com/tealeg/xlsx"            // library for reading Excel files
+	"go.mongodb.org/mongo-driver/bson"  // bson library for marshalling data
 	"go.mongodb.org/mongo-driver/mongo" // mongo driver
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"io"
 	"log"
 	"mime/multipart"
 	"strconv"
@@ -54,7 +53,7 @@ func UpdateJournalList(client *mongo.Client, journalXlsFile *multipart.FileHeade
 		}
 		if len(data) < 1 {
 			log.Println("Invalid Journals File")
-			err := errors.New("Invalid Journals File")
+			err := errors.New("invalid Journals File")
 			return err
 		}
 		// Delete existing data
@@ -73,24 +72,23 @@ func UpdateJournalList(client *mongo.Client, journalXlsFile *multipart.FileHeade
 func SetImage(client *mongo.Client, id string, image *multipart.FileHeader) error {
 	// Connect to MongoDB
 	collection := client.Database("test").Collection("Journals")
-	imageContent, _ := image.Open()
-	imageBytes, err := io.ReadAll(imageContent)
-	if err != nil {
-		log.Println(err)
-		return err
-	}
-
-	// TODO: Store images another way
 	/*
-		imageUri, err = Asset.UploadImage(image)
+		imageContent, _ := image.Open()
+		imageBytes, err := io.ReadAll(imageContent)
 		if err != nil {
+			log.Println(err)
 			return err
 		}
 	*/
 
+	imageUri, err := asset.UploadFile(image)
+	if err != nil {
+		return err
+	}
+
 	filter := bson.M{"序号": id}
-	// update := bson.M{"$set": bson.M{"image": imageUri}}
-	update := bson.M{"$set": bson.M{"image": imageBytes}}
+	update := bson.M{"$set": bson.M{"image": imageUri}}
+	// update := bson.M{"$set": bson.M{"image": imageBytes}}
 
 	_, err = collection.UpdateOne(context.Background(), filter, update)
 	if err != nil {
@@ -101,7 +99,7 @@ func SetImage(client *mongo.Client, id string, image *multipart.FileHeader) erro
 	return nil
 }
 
-func GetImage(client *mongo.Client, id string) ([]byte, error) {
+func GetImage(client *mongo.Client, id string) (string, error) {
 	// Connect to MongoDB
 	collection := client.Database("test").Collection("Journals")
 
@@ -109,24 +107,27 @@ func GetImage(client *mongo.Client, id string) ([]byte, error) {
 	projection := bson.M{"_id": 0, "image": 1}
 	findOptions := options.FindOneOptions{Projection: projection}
 
-	// TODO: Store images another way
-	/*
-		var imageUri string
-		err := collection.FindOne(context.Background(), filter, &findOptions).Decode(&imageUri)
-		if err != nil {
-			return nil, err
-		}
-		return imageUri, nil
-	*/
+	var result struct {
+		Image interface{} `bson:"image"`
+	}
 
-	var result bson.M
 	err := collection.FindOne(context.Background(), filter, &findOptions).Decode(&result)
 	if err != nil {
-		return nil, errors.New("Invaild Index")
+		return "", err
 	}
-	imageBinary, ok := result["image"].(primitive.Binary)
-	if !ok {
-		return nil, errors.New("Image Not Found")
-	}
-	return imageBinary.Data, nil
+	return result.Image.(string), nil
+
+	/*
+		var result bson.M
+		err := collection.FindOne(context.Background(), filter, &findOptions).Decode(&result)
+		if err != nil {
+			return nil, errors.New("Invalid Index")
+		}
+		imageBinary, ok := result["image"].(primitive.Binary)
+		if !ok {
+			return nil, errors.New("Image Not Found")
+		}
+		return imageBinary.Data, nil
+	*/
+
 }

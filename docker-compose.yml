@@ -16,9 +16,12 @@ services:
       - mongodb_container
     ports:
       - "1323:1323"
+    volumes:
+      - static_data_container:/static
 
 volumes:
   mongodb_data_container:
+  static_data_container:
 networks:
   default:
     driver: bridge
