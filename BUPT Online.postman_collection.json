@@ -1,0 +1,829 @@
+{
+	"info": {
+		"_postman_id": "f7b37f68-5394-4403-983b-6bc04db2a182",
+		"name": "BUPT Online",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "发文期刊前30 首页",
+			"item": [
+				{
+					"name": "发文期刊前30",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://116.63.163.97:1323/journals",
+							"protocol": "http",
+							"host": [
+								"116",
+								"63",
+								"163",
+								"97"
+							],
+							"port": "1323",
+							"path": [
+								"journals"
+							]
+						},
+						"description": "图片为地址"
+					},
+					"response": []
+				},
+				{
+					"name": "发文期刊前30 上传",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "xlsx",
+									"description": "标准格式文件",
+									"type": "file",
+									"src": "/C:/Users/Administrator/Desktop/本院发文期刊前30.xlsx"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://[::1]:1323/journals",
+							"protocol": "http",
+							"host": [
+								"[::1]"
+							],
+							"port": "1323",
+							"path": [
+								"journals"
+							]
+						},
+						"description": "上传后会直接替换原来所有期刊"
+					},
+					"response": []
+				},
+				{
+					"name": "发文期刊前30 上传期刊图片",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "img",
+									"description": "图片文件",
+									"type": "file",
+									"src": []
+								}
+							]
+						},
+						"url": {
+							"raw": "http://116.63.163.97:1323/journals/:id/image",
+							"protocol": "http",
+							"host": [
+								"116",
+								"63",
+								"163",
+								"97"
+							],
+							"port": "1323",
+							"path": [
+								"journals",
+								":id",
+								"image"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "",
+									"description": "期刊id，文件里写的"
+								}
+							]
+						},
+						"description": "上传图片"
+					},
+					"response": []
+				},
+				{
+					"name": "发文期刊前30 获取期刊图片",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://116.63.163.97:1323/journals/:id/image",
+							"protocol": "http",
+							"host": [
+								"116",
+								"63",
+								"163",
+								"97"
+							],
+							"port": "1323",
+							"path": [
+								"journals",
+								":id",
+								"image"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1",
+									"description": "期刊id，文件里写的"
+								}
+							]
+						},
+						"description": "返回图片地址"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "ESI",
+			"item": [
+				{
+					"name": "获取所有ESI热门",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://116.63.163.97:1323/esi/hot",
+							"protocol": "http",
+							"host": [
+								"116",
+								"63",
+								"163",
+								"97"
+							],
+							"port": "1323",
+							"path": [
+								"esi",
+								"hot"
+							]
+						},
+						"description": "图像为目前二进制，后面会改成地址"
+					},
+					"response": []
+				},
+				{
+					"name": "获取所有ESI高被引",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://116.63.163.97:1323/esi/highlycited",
+							"protocol": "http",
+							"host": [
+								"116",
+								"63",
+								"163",
+								"97"
+							],
+							"port": "1323",
+							"path": [
+								"esi",
+								"highlycited"
+							]
+						},
+						"description": "图像为目前二进制，后面会改成地址"
+					},
+					"response": []
+				},
+				{
+					"name": "上传新ESI热门文件",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "xlsx",
+									"description": "一个标准格式的表格",
+									"type": "file",
+									"src": "/C:/Users/Administrator/Desktop/HCP21-23-高被引历史/EF-2023-0003.xlsx"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://116.63.163.97:1323/esi/hot?title=2023-03",
+							"protocol": "http",
+							"host": [
+								"116",
+								"63",
+								"163",
+								"97"
+							],
+							"port": "1323",
+							"path": [
+								"esi",
+								"hot"
+							],
+							"query": [
+								{
+									"key": "date",
+									"value": null,
+									"description": "以后会加入时间",
+									"disabled": true
+								},
+								{
+									"key": "title",
+									"value": "2023-03"
+								}
+							]
+						},
+						"description": "图像为目前二进制，后面会改成地址"
+					},
+					"response": []
+				},
+				{
+					"name": "上传新ESI高被引",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "xlsx",
+									"description": "一个标准格式的表格",
+									"type": "file",
+									"src": "/C:/Users/Administrator/Desktop/HP21-23-热点历史/EF-2023-0003.xlsx"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://116.63.163.97:1323/esi/highlycited?title=2023-03",
+							"protocol": "http",
+							"host": [
+								"116",
+								"63",
+								"163",
+								"97"
+							],
+							"port": "1323",
+							"path": [
+								"esi",
+								"highlycited"
+							],
+							"query": [
+								{
+									"key": "date",
+									"value": null,
+									"description": "以后会加入时间",
+									"disabled": true
+								},
+								{
+									"key": "title",
+									"value": "2023-03"
+								}
+							]
+						},
+						"description": "图像为目前二进制，后面会改成地址"
+					},
+					"response": []
+				},
+				{
+					"name": "删除一期ESI热门统计",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://116.63.163.97:1323/esi/hot/:id",
+							"protocol": "http",
+							"host": [
+								"116",
+								"63",
+								"163",
+								"97"
+							],
+							"port": "1323",
+							"path": [
+								"esi",
+								"hot",
+								":id"
+							],
+							"query": [
+								{
+									"key": "date",
+									"value": null,
+									"description": "会加入时间",
+									"disabled": true
+								}
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "",
+									"description": "get返回的数据库自动生成的主键，对应一个文件，或者说一期"
+								}
+							]
+						},
+						"description": "图像为目前二进制，后面会改成地址"
+					},
+					"response": []
+				},
+				{
+					"name": "删除一期ESI高被引",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://116.63.163.97:1323/esi/highlycited/:id",
+							"protocol": "http",
+							"host": [
+								"116",
+								"63",
+								"163",
+								"97"
+							],
+							"port": "1323",
+							"path": [
+								"esi",
+								"highlycited",
+								":id"
+							],
+							"query": [
+								{
+									"key": "date",
+									"value": null,
+									"description": "会加入时间",
+									"disabled": true
+								}
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "",
+									"description": "get返回的数据库自动生成的主键，对应一个文件，或者说一期"
+								}
+							]
+						},
+						"description": "图像为目前二进制，后面会改成地址"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Incites",
+			"item": [
+				{
+					"name": "获取所有Incites人员",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://116.63.163.97:1323/incites",
+							"protocol": "http",
+							"host": [
+								"116",
+								"63",
+								"163",
+								"97"
+							],
+							"port": "1323",
+							"path": [
+								"incites"
+							]
+						},
+						"description": "图像为目前二进制，后面会改成地址"
+					},
+					"response": []
+				},
+				{
+					"name": "上传Incites",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "csv",
+									"description": "标准文件",
+									"type": "file",
+									"src": "/C:/Users/Administrator/Desktop/Incites-bupt-5 年- 人员-cs-2715.csv"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://116.63.163.97:1323/incites?title",
+							"protocol": "http",
+							"host": [
+								"116",
+								"63",
+								"163",
+								"97"
+							],
+							"port": "1323",
+							"path": [
+								"incites"
+							],
+							"query": [
+								{
+									"key": "title",
+									"value": null,
+									"description": "标题"
+								}
+							]
+						},
+						"description": "图像为目前二进制，后面会改成地址"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "News",
+			"item": [
+				{
+					"name": "基金项目",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "img",
+									"description": "图片文件",
+									"type": "file",
+									"src": []
+								}
+							]
+						},
+						"url": {
+							"raw": "http://116.63.163.97:1323/news/announcement?num=20&start=0",
+							"protocol": "http",
+							"host": [
+								"116",
+								"63",
+								"163",
+								"97"
+							],
+							"port": "1323",
+							"path": [
+								"news",
+								"announcement"
+							],
+							"query": [
+								{
+									"key": "num",
+									"value": "20",
+									"description": "default: 50"
+								},
+								{
+									"key": "start",
+									"value": "0",
+									"description": "default: 0"
+								}
+							]
+						},
+						"description": "图像为目前二进制，后面会改成地址"
+					},
+					"response": []
+				},
+				{
+					"name": "图书馆动态 最新资源",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "http://116.63.163.97:1323/news/news_lib_res?num=50&start=0",
+							"protocol": "http",
+							"host": [
+								"116",
+								"63",
+								"163",
+								"97"
+							],
+							"port": "1323",
+							"path": [
+								"news",
+								"news_lib_res"
+							],
+							"query": [
+								{
+									"key": "num",
+									"value": "50",
+									"description": "default: 50"
+								},
+								{
+									"key": "start",
+									"value": "0",
+									"description": "default: 0"
+								}
+							]
+						},
+						"description": "图像为目前二进制，后面会改成地址"
+					},
+					"response": []
+				},
+				{
+					"name": "图书馆动态 最新公告",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "http://116.63.163.97:1323/news/news_lib_ann?num=1&start=0",
+							"protocol": "http",
+							"host": [
+								"116",
+								"63",
+								"163",
+								"97"
+							],
+							"port": "1323",
+							"path": [
+								"news",
+								"news_lib_ann"
+							],
+							"query": [
+								{
+									"key": "num",
+									"value": "1",
+									"description": "default: 50"
+								},
+								{
+									"key": "start",
+									"value": "0",
+									"description": "default: 0"
+								}
+							]
+						},
+						"description": "图像为目前二进制，后面会改成地址"
+					},
+					"response": []
+				},
+				{
+					"name": "会议数据",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "http://116.63.163.97:1323/news/conf",
+							"protocol": "http",
+							"host": [
+								"116",
+								"63",
+								"163",
+								"97"
+							],
+							"port": "1323",
+							"path": [
+								"news",
+								"conf"
+							]
+						},
+						"description": "图像为目前二进制，后面会改成地址"
+					},
+					"response": []
+				},
+				{
+					"name": "新闻数据采集",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "http://116.63.163.97:1323/news/news?num=50&start=0",
+							"protocol": "http",
+							"host": [
+								"116",
+								"63",
+								"163",
+								"97"
+							],
+							"port": "1323",
+							"path": [
+								"news",
+								"news"
+							],
+							"query": [
+								{
+									"key": "num",
+									"value": "50",
+									"description": "default: 50"
+								},
+								{
+									"key": "start",
+									"value": "0",
+									"description": "default: 0"
+								}
+							]
+						},
+						"description": "图像为目前二进制，后面会改成地址"
+					},
+					"response": []
+				},
+				{
+					"name": "基金项目 上传",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "csv",
+									"description": "标准文件",
+									"type": "file",
+									"src": "/C:/Users/Administrator/Desktop/基金项目.csv"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://116.63.163.97:1323/news/announcement",
+							"protocol": "http",
+							"host": [
+								"116",
+								"63",
+								"163",
+								"97"
+							],
+							"port": "1323",
+							"path": [
+								"news",
+								"announcement"
+							]
+						},
+						"description": "图像为目前二进制，后面会改成地址"
+					},
+					"response": []
+				},
+				{
+					"name": "会议数据",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "csv",
+									"description": "标准文件",
+									"type": "file",
+									"src": "/C:/Users/Administrator/Desktop/会议数据采集.csv"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://116.63.163.97:1323/news/conf",
+							"protocol": "http",
+							"host": [
+								"116",
+								"63",
+								"163",
+								"97"
+							],
+							"port": "1323",
+							"path": [
+								"news",
+								"conf"
+							]
+						},
+						"description": "图像为目前二进制，后面会改成地址"
+					},
+					"response": []
+				},
+				{
+					"name": "图书馆动态 最新资源",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "csv",
+									"description": "标准文件",
+									"type": "file",
+									"src": "/C:/Users/Administrator/Desktop/数据整理-图书馆动态-最新资源.csv"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://116.63.163.97:1323/news/news_lib_res",
+							"protocol": "http",
+							"host": [
+								"116",
+								"63",
+								"163",
+								"97"
+							],
+							"port": "1323",
+							"path": [
+								"news",
+								"news_lib_res"
+							]
+						},
+						"description": "图像为目前二进制，后面会改成地址"
+					},
+					"response": []
+				},
+				{
+					"name": "图书馆动态 最新公告",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "csv",
+									"description": "标准文件",
+									"type": "file",
+									"src": "/C:/Users/Administrator/Desktop/数据整理-图书馆动态-公告.csv"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://116.63.163.97:1323/news/news_lib_ann",
+							"protocol": "http",
+							"host": [
+								"116",
+								"63",
+								"163",
+								"97"
+							],
+							"port": "1323",
+							"path": [
+								"news",
+								"news_lib_ann"
+							]
+						},
+						"description": "图像为目前二进制，后面会改成地址"
+					},
+					"response": []
+				},
+				{
+					"name": "新闻数据采集 上传",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "csv",
+									"description": "标准文件",
+									"type": "file",
+									"src": "/C:/Users/Administrator/Desktop/新闻数据采集.csv"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://116.63.163.97:1323/news/news",
+							"protocol": "http",
+							"host": [
+								"116",
+								"63",
+								"163",
+								"97"
+							],
+							"port": "1323",
+							"path": [
+								"news",
+								"news"
+							]
+						},
+						"description": "图像为目前二进制，后面会改成地址"
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

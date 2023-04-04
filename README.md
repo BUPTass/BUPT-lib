@@ -7,7 +7,8 @@ This is an **ongoing** project.
 # Usage
 
 `
-docker-compose -d
+docker compose build
+docker compose up -d
 `
 
 will start the server listening at :1323
