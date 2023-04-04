@@ -24,8 +24,8 @@ jobs:
     - name: Build
       run: go build -o BUPT-lib -v
 
-    - name: Action Release
-      uses: yakuhzi/release-asset@v1.2.3
+    - name: 'Upload Artifact'
+      uses: actions/upload-artifact@v3
       with:
-
-        file: BUPT-lib
+        name: BUPT-lib
+        path: BUPT-lib
