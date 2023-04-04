@@ -12,6 +12,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
 	"mime/multipart"
+	"path"
 	"strconv"
 	"strings"
 )
@@ -85,14 +86,15 @@ func GetEsi(client *mongo.Client, name string) ([]byte, error) {
 func DeleteEsi(client *mongo.Client, id string, name string) error {
 	collection := client.Database("test").Collection(name)
 	filter := bson.M{"_id": id}
-	projection := bson.M{"_id": 0, "filename": 1}
+	projection := bson.M{"_id": 0, "file": 1}
 	findOptions := options.FindOneOptions{Projection: projection}
 	var result string
 	err := collection.FindOne(context.Background(), filter, &findOptions).Decode(&result)
 	if err != nil {
 		return errors.New("Invaild Index")
 	}
-	err = Asset.DeleteFile(result)
+	fileName := path.Base(result)
+	err = Asset.DeleteFile(fileName)
 	if err != nil {
 		return errors.New("Unable to remove")
 	}
