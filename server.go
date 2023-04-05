@@ -4,8 +4,8 @@ import (
 	esi "BUPT-lib/data_import"
 	journal "BUPT-lib/data_import"
 	news "BUPT-lib/data_import"
-	data_retrieve "BUPT-lib/data_retrieve"
-	utils "BUPT-lib/utils"
+	"BUPT-lib/data_retrieve"
+	"BUPT-lib/utils"
 	"github.com/labstack/echo/v4"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -20,9 +20,8 @@ func main() {
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "BUPT Library API backend")
 	})
-	e.Static("/", "static")
 	e.Static("/static", "static")
-	e.GET("/journals", func(c echo.Context) error {
+	e.GET("/journals/top30", func(c echo.Context) error {
 		collection := mongoClient.Database("test").Collection("Journals")
 		JournalJson, err := data_retrieve.GetAllDocumentsAsJson(collection)
 		if err != nil {
@@ -32,18 +31,18 @@ func main() {
 			return c.JSONBlob(http.StatusOK, JournalJson)
 		}
 	})
-	e.POST("/journals", func(c echo.Context) error {
+	e.PUT("/journals/top30", func(c echo.Context) error {
 		journalXlsFile, err := c.FormFile("xlsx")
 		if err != nil {
 			return c.String(http.StatusBadRequest, "Error getting file from form: "+err.Error())
 		}
-		if journal.UpdateJournalList(mongoClient, journalXlsFile) != nil {
+		if journal.PutT30JournalList(mongoClient, journalXlsFile) != nil {
 			return c.String(http.StatusInternalServerError, "Upload Failed")
 		} else {
 			return c.String(http.StatusOK, "Upload OK")
 		}
 	})
-	e.POST("/journals/:id/image", func(c echo.Context) error {
+	e.POST("/journals/top30/:id/image", func(c echo.Context) error {
 		id := c.Param("id")
 		image, err := c.FormFile("img")
 		if err != nil {
@@ -56,13 +55,37 @@ func main() {
 			return c.String(http.StatusOK, "set img")
 		}
 	})
-	e.GET("/journals/:id/image", func(c echo.Context) error {
+	e.GET("/journals/top30/:id/image", func(c echo.Context) error {
 		id := c.Param("id")
 		image, err := journal.GetImage(mongoClient, id)
 		if err != nil {
 			return c.String(http.StatusNotFound, err.Error())
 		} else {
 			return c.String(http.StatusOK, image)
+		}
+	})
+	e.GET("/journals/ccf", func(c echo.Context) error {
+		ccfJson, err := journal.GetCcfList(mongoClient)
+		if err != nil {
+			return c.String(http.StatusInternalServerError, "Failed to retrieve")
+
+		} else {
+			return c.JSONBlob(http.StatusOK, ccfJson)
+		}
+	})
+	e.PUT("/journals/ccf", func(c echo.Context) error {
+		file, err := c.FormFile("csv")
+		if err != nil {
+			return c.String(http.StatusBadRequest, err.Error())
+		}
+
+		err = journal.PutCcfList(mongoClient, file)
+
+		if err != nil {
+			return c.String(http.StatusInternalServerError, "Failed to retrieve")
+
+		} else {
+			return c.String(http.StatusOK, "Set CCF")
 		}
 	})
 	e.POST("/esi/highlycited", func(c echo.Context) error {

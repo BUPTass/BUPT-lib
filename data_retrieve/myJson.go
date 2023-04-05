@@ -15,7 +15,8 @@ func GetAllDocumentsAsJson(collection *mongo.Collection) ([]byte, error) {
 	// Define options to limit the number of returned documents.
 	// To retrieve all documents, set the limit to -1.
 	findOptions := options.Find()
-	//findOptions.SetLimit(-1)
+
+	findOptions.SetProjection(bson.M{"_id": 0})
 
 	// Retrieve all documents from the collection.
 	cursor, err := collection.Find(context.Background(), bson.D{{}}, findOptions)

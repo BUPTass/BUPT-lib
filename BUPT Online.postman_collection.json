@@ -6,7 +6,7 @@
 	},
 	"item": [
 		{
-			"name": "发文期刊前30 首页",
+			"name": "Journal&Merting",
 			"item": [
 				{
 					"name": "发文期刊前30",
@@ -14,12 +14,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{URL}}/journals",
+							"raw": "{{URL}}/journals/top30",
 							"host": [
 								"{{URL}}"
 							],
 							"path": [
-								"journals"
+								"journals",
+								"top30"
 							]
 						},
 						"description": "图像为目前二进制，后面会改成地址"
@@ -29,7 +30,7 @@
 				{
 					"name": "发文期刊前30 上传",
 					"request": {
-						"method": "POST",
+						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "formdata",
@@ -43,12 +44,13 @@
 							]
 						},
 						"url": {
-							"raw": "{{URL}}/journals",
+							"raw": "{{URL}}/journals/top30",
 							"host": [
 								"{{URL}}"
 							],
 							"path": [
-								"journals"
+								"journals",
+								"top30"
 							]
 						},
 						"description": "上传后会直接替换原来所有期刊"
@@ -58,7 +60,7 @@
 				{
 					"name": "发文期刊前30 上传期刊图片",
 					"request": {
-						"method": "POST",
+						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "formdata",
@@ -72,12 +74,13 @@
 							]
 						},
 						"url": {
-							"raw": "{{URL}}/journals/:id/image",
+							"raw": "{{URL}}/journals/top30/:id/image",
 							"host": [
 								"{{URL}}"
 							],
 							"path": [
 								"journals",
+								"top30",
 								":id",
 								"image"
 							],
@@ -99,12 +102,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{URL}}/journals/:id/image",
+							"raw": "{{URL}}/journals/top30/:id/image",
 							"host": [
 								"{{URL}}"
 							],
 							"path": [
 								"journals",
+								"top30",
 								":id",
 								"image"
 							],
@@ -117,6 +121,52 @@
 							]
 						},
 						"description": "目前会直接返回图片，后面应该也会改成地址"
+					},
+					"response": []
+				},
+				{
+					"name": "CCF",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/journals/ccf",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"journals",
+								"ccf"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CCF 上传",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "csv",
+									"type": "file",
+									"src": "/C:/Users/Administrator/Desktop/数据整理-CCF论文等级.csv"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{URL}}/journals/ccf",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"journals",
+								"ccf"
+							]
+						}
 					},
 					"response": []
 				}

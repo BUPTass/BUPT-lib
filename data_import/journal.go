@@ -2,7 +2,9 @@ package data
 
 import (
 	"BUPT-lib/asset"
+	myJson "BUPT-lib/data_retrieve"
 	"context"
+	"encoding/csv"
 	"errors"
 	"github.com/tealeg/xlsx"            // library for reading Excel files
 	"go.mongodb.org/mongo-driver/bson"  // bson library for marshalling data
@@ -13,7 +15,17 @@ import (
 	"strconv"
 )
 
-func UpdateJournalList(client *mongo.Client, journalXlsFile *multipart.FileHeader) error {
+type Publication struct {
+	ShortName string `bson:"name"`
+	FullName  string `bson:"fullName"`
+	Publisher string `bson:"publisher"`
+	Address   string `bson:"url"`
+	Level     string `bson:"level"`
+	Type      string `bson:"type"`
+	Category  int8   `bson:"category"`
+}
+
+func PutT30JournalList(client *mongo.Client, journalXlsFile *multipart.FileHeader) error {
 	// Connect to MongoDB
 	collection := client.Database("test").Collection("Journals")
 
@@ -130,4 +142,63 @@ func GetImage(client *mongo.Client, id string) (string, error) {
 		return imageBinary.Data, nil
 	*/
 
+}
+
+func GetCcfList(client *mongo.Client) ([]byte, error) {
+	collection := client.Database("test").Collection("CCF")
+	return myJson.GetAllDocumentsAsJson(collection)
+}
+
+func PutCcfList(client *mongo.Client, csv *multipart.FileHeader) error {
+	collection := client.Database("test").Collection("CCF")
+	data, err := parseCcfCsv(csv)
+	if err != nil {
+		return err
+	}
+	collection.DeleteMany(context.Background(), bson.M{})
+	for _, data_ := range data {
+		_, err = collection.InsertOne(context.Background(), data_)
+		if err != nil {
+			log.Println(err)
+			return err
+		}
+	}
+	return nil
+}
+
+func parseCcfCsv(csvFile *multipart.FileHeader) ([]Publication, error) {
+	// Open the Excel file
+	tmpFile, err := csvFile.Open()
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	// Parse CSV file
+	reader := csv.NewReader(tmpFile)
+	reader.LazyQuotes = true
+	reader.FieldsPerRecord = -1
+	records, err := reader.ReadAll()
+	if err != nil {
+		return nil, err
+	}
+	var data []Publication
+	// Loop over CSV records from Row 1
+	for _, record := range records[1:] {
+		i64, err := strconv.ParseInt(record[7], 10, 8)
+		if err != nil {
+			i64 = -1
+		}
+		pub := Publication{
+			ShortName: record[1],
+			FullName:  record[2],
+			Publisher: record[3],
+			Address:   record[4],
+			Level:     record[5],
+			Type:      record[6],
+			Category:  int8(i64),
+		}
+		data = append(data, pub)
+	}
+
+	return data, nil
 }

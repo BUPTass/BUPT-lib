@@ -59,7 +59,7 @@ func AddESI(client *mongo.Client, title string, EsiFile *multipart.FileHeader, n
 		return err
 	}
 
-	data, err := ParseESIHot(EsiFile)
+	data, err := parseESIHot(EsiFile)
 	if err != nil {
 		return err
 	}
@@ -85,7 +85,8 @@ func GetAllEsi(client *mongo.Client, name string) ([]byte, error) {
 	projection := bson.M{"parsed_content": 0}
 	cur, err := collection.Find(context.Background(), filter, options.Find().SetProjection(projection))
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		return nil, err
 	}
 	defer cur.Close(context.Background())
 	var documents []map[string]interface{}
@@ -120,7 +121,7 @@ func GetEsi(client *mongo.Client, name string, title string) ([]byte, error) {
 
 	if err != nil {
 		log.Println(err)
-		return []byte(""), err
+		return nil, err
 	}
 	jsonBytes, err := json.Marshal(result)
 	if err != nil {
@@ -150,7 +151,7 @@ func DeleteEsi(client *mongo.Client, id string, name string) error {
 	}
 	return nil
 }
-func ParseESIHot(EsiFile *multipart.FileHeader) ([]interface{}, error) {
+func parseESIHot(EsiFile *multipart.FileHeader) ([]interface{}, error) {
 	// Open the Excel file
 	tmpFile, err := EsiFile.Open()
 	if err != nil {
@@ -226,7 +227,7 @@ func AddIncites(client *mongo.Client, title string, IncitesFile *multipart.FileH
 		return err
 	}
 
-	data, err := ParseIncites(IncitesFile)
+	data, err := parseIncites(IncitesFile)
 	if err != nil {
 		log.Println(err)
 		return err
@@ -247,7 +248,7 @@ func AddIncites(client *mongo.Client, title string, IncitesFile *multipart.FileH
 	return nil
 }
 
-func ParseIncites(IncitesFile *multipart.FileHeader) ([]IncitesRow, error) {
+func parseIncites(IncitesFile *multipart.FileHeader) ([]IncitesRow, error) {
 	// Open the Excel file
 	tmpFile, err := IncitesFile.Open()
 	if err != nil {
