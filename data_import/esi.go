@@ -5,6 +5,7 @@ import (
 	myJson "BUPT-lib/data_retrieve"
 	"context"
 	"encoding/csv"
+	"encoding/json"
 	"errors"
 	"github.com/tealeg/xlsx"
 	"go.mongodb.org/mongo-driver/bson"
@@ -78,9 +79,58 @@ func AddESI(client *mongo.Client, title string, EsiFile *multipart.FileHeader, n
 	return nil
 }
 
-func GetEsi(client *mongo.Client, name string) ([]byte, error) {
+func GetAllEsi(client *mongo.Client, name string) ([]byte, error) {
 	collection := client.Database("test").Collection(name)
-	return myJson.GetAllDocumentsAsJson(collection)
+	filter := bson.M{}
+	projection := bson.M{"parsed_content": 0}
+	cur, err := collection.Find(context.Background(), filter, options.Find().SetProjection(projection))
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer cur.Close(context.Background())
+	var documents []map[string]interface{}
+	for cur.Next(context.Background()) {
+		var document map[string]interface{}
+		if err := cur.Decode(&document); err != nil {
+			log.Println(err)
+			return nil, err
+		}
+		documents = append(documents, document)
+	}
+
+	jsonBytes, err := json.Marshal(documents)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	if string(jsonBytes) == "null" {
+		jsonBytes = []byte("[]")
+	}
+	return jsonBytes, nil
+}
+
+func GetEsi(client *mongo.Client, name string, title string) ([]byte, error) {
+	collection := client.Database("test").Collection(name)
+	filter := bson.M{"title": title}
+	projection := bson.M{"_id": 0, "parsed_content": 1}
+	findOptions := options.FindOneOptions{Projection: projection}
+
+	var result bson.M
+	err := collection.FindOne(context.Background(), filter, &findOptions).Decode(&result)
+
+	if err != nil {
+		log.Println(err)
+		return []byte(""), err
+	}
+	jsonBytes, err := json.Marshal(result)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	if string(jsonBytes) == "null" {
+		jsonBytes = []byte("[]")
+	}
+	return jsonBytes, nil
 }
 
 func DeleteEsi(client *mongo.Client, id string, name string) error {
@@ -158,7 +208,7 @@ func ParseESIHot(EsiFile *multipart.FileHeader) ([]interface{}, error) {
 		}
 		if len(data) < 1 {
 			log.Println("Invalid ESI File")
-			err := errors.New("Invalid ESI File")
+			err := errors.New("invalid ESI File")
 			return nil, err
 		}
 		return data, nil

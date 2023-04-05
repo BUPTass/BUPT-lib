@@ -81,8 +81,20 @@ func main() {
 		}
 	})
 	e.GET("/esi/highlycited", func(c echo.Context) error {
-		esiJson, err := esi.GetEsi(mongoClient, "ESI_Cited")
+		esiJson, err := esi.GetAllEsi(mongoClient, "ESI_Cited")
 		if err != nil {
+			return c.String(http.StatusInternalServerError, "Failed to retrieve")
+		} else {
+			return c.JSONBlob(http.StatusOK, esiJson)
+		}
+	})
+	e.GET("/esi/highlycited/:title", func(c echo.Context) error {
+		title := c.Param("title")
+		esiJson, err := esi.GetEsi(mongoClient, "ESI_Cited", title)
+
+		if err == mongo.ErrNoDocuments {
+			return c.String(http.StatusNotFound, "Not Found")
+		} else if err != nil {
 			return c.String(http.StatusInternalServerError, "Failed to retrieve")
 		} else {
 			return c.JSONBlob(http.StatusOK, esiJson)
@@ -113,8 +125,21 @@ func main() {
 		}
 	})
 	e.GET("/esi/hot", func(c echo.Context) error {
-		esiJson, err := esi.GetEsi(mongoClient, "ESI_Hot")
+		esiJson, err := esi.GetAllEsi(mongoClient, "ESI_Hot")
+
 		if err != nil {
+			return c.String(http.StatusInternalServerError, "Failed to retrieve")
+		} else {
+			return c.JSONBlob(http.StatusOK, esiJson)
+		}
+	})
+	e.GET("/esi/hot/:title", func(c echo.Context) error {
+		title := c.Param("title")
+		esiJson, err := esi.GetEsi(mongoClient, "ESI_Hot", title)
+
+		if err == mongo.ErrNoDocuments {
+			return c.String(http.StatusNotFound, "Not Found")
+		} else if err != nil {
 			return c.String(http.StatusInternalServerError, "Failed to retrieve")
 		} else {
 			return c.JSONBlob(http.StatusOK, esiJson)
@@ -202,7 +227,7 @@ func main() {
 		if err != nil {
 			return c.String(http.StatusBadRequest, err.Error())
 		}
-		err = esi.AddAnnouncement(mongoClient, file)
+		err = news.AddAnnouncement(mongoClient, file)
 		if err != nil {
 			return c.String(http.StatusInternalServerError, err.Error())
 		} else {
@@ -263,7 +288,7 @@ func main() {
 		if err != nil {
 			return c.String(http.StatusBadRequest, err.Error())
 		}
-		err = esi.AddOngoingConferences(mongoClient, file)
+		err = news.AddOngoingConferences(mongoClient, file)
 		if err != nil {
 			return c.String(http.StatusInternalServerError, err.Error())
 		} else {
@@ -302,7 +327,7 @@ func main() {
 		if err != nil {
 			return c.String(http.StatusBadRequest, err.Error())
 		}
-		err = esi.AddLibNews(mongoClient, file, 1)
+		err = news.AddLibNews(mongoClient, file, 1)
 		if err != nil {
 			return c.String(http.StatusInternalServerError, err.Error())
 		} else {
@@ -342,7 +367,7 @@ func main() {
 		if err != nil {
 			return c.String(http.StatusBadRequest, err.Error())
 		}
-		err = esi.AddLibNews(mongoClient, file, 2)
+		err = news.AddLibNews(mongoClient, file, 2)
 		if err != nil {
 			return c.String(http.StatusInternalServerError, err.Error())
 		} else {

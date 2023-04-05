@@ -145,6 +145,32 @@
 					"response": []
 				},
 				{
+					"name": "获取ESI热门",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/esi/hot/:title",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"esi",
+								"hot",
+								":title"
+							],
+							"variable": [
+								{
+									"key": "title",
+									"value": "2023-01"
+								}
+							]
+						},
+						"description": "图像为目前二进制，后面会改成地址"
+					},
+					"response": []
+				},
+				{
 					"name": "获取所有ESI高被引",
 					"request": {
 						"method": "GET",
@@ -164,6 +190,32 @@
 					"response": []
 				},
 				{
+					"name": "获取ESI高被引",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/esi/highlycited/:title",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"esi",
+								"highlycited",
+								":title"
+							],
+							"variable": [
+								{
+									"key": "title",
+									"value": "2023-01"
+								}
+							]
+						},
+						"description": "图像为目前二进制，后面会改成地址"
+					},
+					"response": []
+				},
+				{
 					"name": "上传新ESI热门文件",
 					"request": {
 						"method": "POST",
@@ -175,7 +227,7 @@
 									"key": "xlsx",
 									"description": "一个标准格式的表格",
 									"type": "file",
-									"src": []
+									"src": "/C:/Users/Administrator/Desktop/HCP21-23-高被引历史/EF-2023-0001.xlsx"
 								}
 							]
 						},
