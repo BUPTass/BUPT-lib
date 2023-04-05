@@ -491,3 +491,28 @@ func ParseLibNews(newsFile *multipart.FileHeader, newsType uint8) ([]News, error
 
 	return data, nil
 }
+
+func CountNews(client *mongo.Client, newsType int) (int64, error) {
+	var collection *mongo.Collection
+	var filter bson.M
+	switch newsType {
+	case 1:
+		fallthrough
+	case 2:
+		fallthrough
+	case 0:
+		collection = client.Database("test").Collection("News")
+		filter = bson.M{"type": newsType}
+	case 3:
+		collection = client.Database("test").Collection("Announcement")
+		filter = bson.M{}
+	default:
+		return 0, nil
+	}
+	count, err := collection.CountDocuments(context.Background(), filter)
+	if err != nil {
+		log.Println(err)
+		return 0, err
+	}
+	return count, nil
+}

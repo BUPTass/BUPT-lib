@@ -1,7 +1,7 @@
 {
 	"info": {
-		"_postman_id": "f7b37f68-5394-4403-983b-6bc04db2a182",
-		"name": "BUPT Online",
+		"_postman_id": "01c21544-7676-4538-a65b-45bb9f9a454e",
+		"name": "BUPT",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -14,20 +14,15 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://116.63.163.97:1323/journals",
-							"protocol": "http",
+							"raw": "{{URL}}/journals",
 							"host": [
-								"116",
-								"63",
-								"163",
-								"97"
+								"{{URL}}"
 							],
-							"port": "1323",
 							"path": [
 								"journals"
 							]
 						},
-						"description": "图片为地址"
+						"description": "图像为目前二进制，后面会改成地址"
 					},
 					"response": []
 				},
@@ -43,17 +38,15 @@
 									"key": "xlsx",
 									"description": "标准格式文件",
 									"type": "file",
-									"src": "/C:/Users/Administrator/Desktop/本院发文期刊前30.xlsx"
+									"src": []
 								}
 							]
 						},
 						"url": {
-							"raw": "http://[::1]:1323/journals",
-							"protocol": "http",
+							"raw": "{{URL}}/journals",
 							"host": [
-								"[::1]"
+								"{{URL}}"
 							],
-							"port": "1323",
 							"path": [
 								"journals"
 							]
@@ -74,20 +67,15 @@
 									"key": "img",
 									"description": "图片文件",
 									"type": "file",
-									"src": []
+									"src": "/C:/Users/Administrator/Desktop/1.jpg"
 								}
 							]
 						},
 						"url": {
-							"raw": "http://116.63.163.97:1323/journals/:id/image",
-							"protocol": "http",
+							"raw": "{{URL}}/journals/:id/image",
 							"host": [
-								"116",
-								"63",
-								"163",
-								"97"
+								"{{URL}}"
 							],
-							"port": "1323",
 							"path": [
 								"journals",
 								":id",
@@ -96,7 +84,7 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": "",
+									"value": "2",
 									"description": "期刊id，文件里写的"
 								}
 							]
@@ -111,15 +99,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://116.63.163.97:1323/journals/:id/image",
-							"protocol": "http",
+							"raw": "{{URL}}/journals/:id/image",
 							"host": [
-								"116",
-								"63",
-								"163",
-								"97"
+								"{{URL}}"
 							],
-							"port": "1323",
 							"path": [
 								"journals",
 								":id",
@@ -128,12 +111,12 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": "1",
+									"value": "2",
 									"description": "期刊id，文件里写的"
 								}
 							]
 						},
-						"description": "返回图片地址"
+						"description": "目前会直接返回图片，后面应该也会改成地址"
 					},
 					"response": []
 				}
@@ -148,15 +131,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://116.63.163.97:1323/esi/hot",
-							"protocol": "http",
+							"raw": "{{URL}}/esi/hot",
 							"host": [
-								"116",
-								"63",
-								"163",
-								"97"
+								"{{URL}}"
 							],
-							"port": "1323",
 							"path": [
 								"esi",
 								"hot"
@@ -172,15 +150,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://116.63.163.97:1323/esi/highlycited",
-							"protocol": "http",
+							"raw": "{{URL}}/esi/highlycited",
 							"host": [
-								"116",
-								"63",
-								"163",
-								"97"
+								"{{URL}}"
 							],
-							"port": "1323",
 							"path": [
 								"esi",
 								"highlycited"
@@ -202,34 +175,30 @@
 									"key": "xlsx",
 									"description": "一个标准格式的表格",
 									"type": "file",
-									"src": "/C:/Users/Administrator/Desktop/HCP21-23-高被引历史/EF-2023-0003.xlsx"
+									"src": []
 								}
 							]
 						},
 						"url": {
-							"raw": "http://116.63.163.97:1323/esi/hot?title=2023-03",
-							"protocol": "http",
+							"raw": "{{URL}}/esi/hot?title=2023-01",
 							"host": [
-								"116",
-								"63",
-								"163",
-								"97"
+								"{{URL}}"
 							],
-							"port": "1323",
 							"path": [
 								"esi",
 								"hot"
 							],
 							"query": [
 								{
+									"key": "title",
+									"value": "2023-01",
+									"description": "目前是标题，先当时间用"
+								},
+								{
 									"key": "date",
 									"value": null,
 									"description": "以后会加入时间",
 									"disabled": true
-								},
-								{
-									"key": "title",
-									"value": "2023-03"
 								}
 							]
 						},
@@ -249,34 +218,30 @@
 									"key": "xlsx",
 									"description": "一个标准格式的表格",
 									"type": "file",
-									"src": "/C:/Users/Administrator/Desktop/HP21-23-热点历史/EF-2023-0003.xlsx"
+									"src": []
 								}
 							]
 						},
 						"url": {
-							"raw": "http://116.63.163.97:1323/esi/highlycited?title=2023-03",
-							"protocol": "http",
+							"raw": "{{URL}}/esi/highlycited?title=2023-01",
 							"host": [
-								"116",
-								"63",
-								"163",
-								"97"
+								"{{URL}}"
 							],
-							"port": "1323",
 							"path": [
 								"esi",
 								"highlycited"
 							],
 							"query": [
 								{
+									"key": "title",
+									"value": "2023-01",
+									"description": "目前是标题，先当时间用"
+								},
+								{
 									"key": "date",
 									"value": null,
 									"description": "以后会加入时间",
 									"disabled": true
-								},
-								{
-									"key": "title",
-									"value": "2023-03"
 								}
 							]
 						},
@@ -290,15 +255,10 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://116.63.163.97:1323/esi/hot/:id",
-							"protocol": "http",
+							"raw": "{{URL}}/esi/hot/:id",
 							"host": [
-								"116",
-								"63",
-								"163",
-								"97"
+								"{{URL}}"
 							],
-							"port": "1323",
 							"path": [
 								"esi",
 								"hot",
@@ -330,15 +290,10 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://116.63.163.97:1323/esi/highlycited/:id",
-							"protocol": "http",
+							"raw": "{{URL}}/esi/highlycited/:id",
 							"host": [
-								"116",
-								"63",
-								"163",
-								"97"
+								"{{URL}}"
 							],
-							"port": "1323",
 							"path": [
 								"esi",
 								"highlycited",
@@ -372,20 +327,35 @@
 				{
 					"name": "获取所有Incites人员",
 					"request": {
-						"method": "GET",
+						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "img",
+									"description": "图片文件",
+									"type": "file",
+									"src": []
+								}
+							]
+						},
 						"url": {
-							"raw": "http://116.63.163.97:1323/incites",
-							"protocol": "http",
+							"raw": "{{URL}}/journals/:id/image",
 							"host": [
-								"116",
-								"63",
-								"163",
-								"97"
+								"{{URL}}"
 							],
-							"port": "1323",
 							"path": [
-								"incites"
+								"journals",
+								":id",
+								"image"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "",
+									"description": "期刊id，文件里写的"
+								}
 							]
 						},
 						"description": "图像为目前二进制，后面会改成地址"
@@ -404,27 +374,22 @@
 									"key": "csv",
 									"description": "标准文件",
 									"type": "file",
-									"src": "/C:/Users/Administrator/Desktop/Incites-bupt-5 年- 人员-cs-2715.csv"
+									"src": "/C:/Users/Administrator/Desktop/Incites.csv"
 								}
 							]
 						},
 						"url": {
-							"raw": "http://116.63.163.97:1323/incites?title",
-							"protocol": "http",
+							"raw": "{{URL}}/incites?title=sadfsdfa",
 							"host": [
-								"116",
-								"63",
-								"163",
-								"97"
+								"{{URL}}"
 							],
-							"port": "1323",
 							"path": [
 								"incites"
 							],
 							"query": [
 								{
 									"key": "title",
-									"value": null,
+									"value": "sadfsdfa",
 									"description": "标题"
 								}
 							]
@@ -448,25 +413,13 @@
 						"header": [],
 						"body": {
 							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "img",
-									"description": "图片文件",
-									"type": "file",
-									"src": []
-								}
-							]
+							"formdata": []
 						},
 						"url": {
-							"raw": "http://116.63.163.97:1323/news/announcement?num=20&start=0",
-							"protocol": "http",
+							"raw": "{{URL}}/news/announcement?num=1&start=0",
 							"host": [
-								"116",
-								"63",
-								"163",
-								"97"
+								"{{URL}}"
 							],
-							"port": "1323",
 							"path": [
 								"news",
 								"announcement"
@@ -474,13 +427,12 @@
 							"query": [
 								{
 									"key": "num",
-									"value": "20",
+									"value": "1",
 									"description": "default: 50"
 								},
 								{
 									"key": "start",
-									"value": "0",
-									"description": "default: 0"
+									"value": "0"
 								}
 							]
 						},
@@ -501,15 +453,10 @@
 							"formdata": []
 						},
 						"url": {
-							"raw": "http://116.63.163.97:1323/news/news_lib_res?num=50&start=0",
-							"protocol": "http",
+							"raw": "{{URL}}/news/news_lib_res?num=3&start=0",
 							"host": [
-								"116",
-								"63",
-								"163",
-								"97"
+								"{{URL}}"
 							],
-							"port": "1323",
 							"path": [
 								"news",
 								"news_lib_res"
@@ -517,13 +464,12 @@
 							"query": [
 								{
 									"key": "num",
-									"value": "50",
+									"value": "3",
 									"description": "default: 50"
 								},
 								{
 									"key": "start",
-									"value": "0",
-									"description": "default: 0"
+									"value": "0"
 								}
 							]
 						},
@@ -544,15 +490,10 @@
 							"formdata": []
 						},
 						"url": {
-							"raw": "http://116.63.163.97:1323/news/news_lib_ann?num=1&start=0",
-							"protocol": "http",
+							"raw": "{{URL}}/news/news_lib_ann?num=1&start=3",
 							"host": [
-								"116",
-								"63",
-								"163",
-								"97"
+								"{{URL}}"
 							],
-							"port": "1323",
 							"path": [
 								"news",
 								"news_lib_ann"
@@ -565,8 +506,7 @@
 								},
 								{
 									"key": "start",
-									"value": "0",
-									"description": "default: 0"
+									"value": "3"
 								}
 							]
 						},
@@ -587,15 +527,10 @@
 							"formdata": []
 						},
 						"url": {
-							"raw": "http://116.63.163.97:1323/news/conf",
-							"protocol": "http",
+							"raw": "{{URL}}/news/conf",
 							"host": [
-								"116",
-								"63",
-								"163",
-								"97"
+								"{{URL}}"
 							],
-							"port": "1323",
 							"path": [
 								"news",
 								"conf"
@@ -618,15 +553,10 @@
 							"formdata": []
 						},
 						"url": {
-							"raw": "http://116.63.163.97:1323/news/news?num=50&start=0",
-							"protocol": "http",
+							"raw": "{{URL}}/news/news?num=50",
 							"host": [
-								"116",
-								"63",
-								"163",
-								"97"
+								"{{URL}}"
 							],
-							"port": "1323",
 							"path": [
 								"news",
 								"news"
@@ -636,11 +566,6 @@
 									"key": "num",
 									"value": "50",
 									"description": "default: 50"
-								},
-								{
-									"key": "start",
-									"value": "0",
-									"description": "default: 0"
 								}
 							]
 						},
@@ -665,15 +590,10 @@
 							]
 						},
 						"url": {
-							"raw": "http://116.63.163.97:1323/news/announcement",
-							"protocol": "http",
+							"raw": "{{URL}}/news/announcement",
 							"host": [
-								"116",
-								"63",
-								"163",
-								"97"
+								"{{URL}}"
 							],
-							"port": "1323",
 							"path": [
 								"news",
 								"announcement"
@@ -700,15 +620,10 @@
 							]
 						},
 						"url": {
-							"raw": "http://116.63.163.97:1323/news/conf",
-							"protocol": "http",
+							"raw": "{{URL}}/news/conf",
 							"host": [
-								"116",
-								"63",
-								"163",
-								"97"
+								"{{URL}}"
 							],
-							"port": "1323",
 							"path": [
 								"news",
 								"conf"
@@ -735,15 +650,10 @@
 							]
 						},
 						"url": {
-							"raw": "http://116.63.163.97:1323/news/news_lib_res",
-							"protocol": "http",
+							"raw": "{{URL}}/news/news_lib_res",
 							"host": [
-								"116",
-								"63",
-								"163",
-								"97"
+								"{{URL}}"
 							],
-							"port": "1323",
 							"path": [
 								"news",
 								"news_lib_res"
@@ -770,15 +680,10 @@
 							]
 						},
 						"url": {
-							"raw": "http://116.63.163.97:1323/news/news_lib_ann",
-							"protocol": "http",
+							"raw": "{{URL}}/news/news_lib_ann",
 							"host": [
-								"116",
-								"63",
-								"163",
-								"97"
+								"{{URL}}"
 							],
-							"port": "1323",
 							"path": [
 								"news",
 								"news_lib_ann"
@@ -805,18 +710,121 @@
 							]
 						},
 						"url": {
-							"raw": "http://116.63.163.97:1323/news/news",
-							"protocol": "http",
+							"raw": "{{URL}}/news/news",
 							"host": [
-								"116",
-								"63",
-								"163",
-								"97"
+								"{{URL}}"
 							],
-							"port": "1323",
 							"path": [
 								"news",
 								"news"
+							]
+						},
+						"description": "图像为目前二进制，后面会改成地址"
+					},
+					"response": []
+				},
+				{
+					"name": "基金项目 数量",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{URL}}/news/announcement/total",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"news",
+								"announcement",
+								"total"
+							]
+						},
+						"description": "图像为目前二进制，后面会改成地址"
+					},
+					"response": []
+				},
+				{
+					"name": "图书馆动态 最新资源 数量",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{URL}}/news/news_lib_res/total",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"news",
+								"news_lib_res",
+								"total"
+							]
+						},
+						"description": "图像为目前二进制，后面会改成地址"
+					},
+					"response": []
+				},
+				{
+					"name": "图书馆动态 最新公告 数量",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{URL}}/news/news_lib_ann/total",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"news",
+								"news_lib_ann",
+								"total"
+							]
+						},
+						"description": "图像为目前二进制，后面会改成地址"
+					},
+					"response": []
+				},
+				{
+					"name": "新闻数据采集 数量",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{URL}}/news/news/total",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"news",
+								"news",
+								"total"
 							]
 						},
 						"description": "图像为目前二进制，后面会改成地址"

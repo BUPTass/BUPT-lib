@@ -187,6 +187,15 @@ func main() {
 			return c.JSONBlob(http.StatusOK, newsJson)
 		}
 	})
+	e.GET("/news/announcement/total", func(c echo.Context) error {
+
+		totalNum, err := news.CountNews(mongoClient, 3)
+		if err != nil {
+			return c.String(http.StatusInternalServerError, "Failed to retrieve")
+		} else {
+			return c.String(http.StatusOK, strconv.FormatInt(totalNum, 10))
+		}
+	})
 	e.POST("/news/announcement", func(c echo.Context) error {
 		file, err := c.FormFile("csv")
 
@@ -215,6 +224,15 @@ func main() {
 			return c.String(http.StatusInternalServerError, "Failed to retrieve")
 		} else {
 			return c.JSONBlob(http.StatusOK, newsJson)
+		}
+	})
+	e.GET("/news/news/total", func(c echo.Context) error {
+
+		totalNum, err := news.CountNews(mongoClient, 0)
+		if err != nil {
+			return c.String(http.StatusInternalServerError, "Failed to retrieve")
+		} else {
+			return c.String(http.StatusOK, strconv.FormatInt(totalNum, 10))
 		}
 	})
 	e.POST("/news/news", func(c echo.Context) error {
@@ -269,6 +287,15 @@ func main() {
 			return c.JSONBlob(http.StatusOK, newsJson)
 		}
 	})
+	e.GET("/news/news_lib_res/total", func(c echo.Context) error {
+
+		totalNum, err := news.CountNews(mongoClient, 1)
+		if err != nil {
+			return c.String(http.StatusInternalServerError, "Failed to retrieve")
+		} else {
+			return c.String(http.StatusOK, strconv.FormatInt(totalNum, 10))
+		}
+	})
 	e.POST("/news/news_lib_res", func(c echo.Context) error {
 		file, err := c.FormFile("csv")
 
@@ -298,6 +325,15 @@ func main() {
 			return c.String(http.StatusInternalServerError, "Failed to retrieve")
 		} else {
 			return c.JSONBlob(http.StatusOK, newsJson)
+		}
+	})
+	e.GET("/news/news_lib_ann/total", func(c echo.Context) error {
+
+		totalNum, err := news.CountNews(mongoClient, 2)
+		if err != nil {
+			return c.String(http.StatusInternalServerError, "Failed to retrieve")
+		} else {
+			return c.String(http.StatusOK, strconv.FormatInt(totalNum, 10))
 		}
 	})
 	e.POST("/news/news_lib_ann", func(c echo.Context) error {
