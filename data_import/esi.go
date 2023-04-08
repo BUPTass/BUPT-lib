@@ -9,6 +9,7 @@ import (
 	"errors"
 	"github.com/tealeg/xlsx"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
@@ -54,6 +55,8 @@ func AddESI(client *mongo.Client, title string, EsiFile *multipart.FileHeader, n
 	// Connect to MongoDB
 	collection := client.Database("test").Collection(name)
 
+	esiCollection := client.Database("test").Collection("ESI_papers")
+
 	fileUri, err := Asset.UploadFile(EsiFile)
 	if err != nil {
 		return err
@@ -61,6 +64,13 @@ func AddESI(client *mongo.Client, title string, EsiFile *multipart.FileHeader, n
 
 	data, err := parseESIHot(EsiFile)
 	if err != nil {
+		log.Println(err)
+		return err
+	}
+
+	result, err := esiCollection.InsertMany(context.TODO(), data)
+	if err != nil {
+		log.Println(err)
 		return err
 	}
 
@@ -68,7 +78,7 @@ func AddESI(client *mongo.Client, title string, EsiFile *multipart.FileHeader, n
 		"title":          title,
 		"filename":       EsiFile.Filename,
 		"file":           fileUri,
-		"parsed_content": data,
+		"parsed_content": result.InsertedIDs,
 	}
 
 	_, err = collection.InsertOne(context.Background(), document)
@@ -116,14 +126,27 @@ func GetEsi(client *mongo.Client, name string, title string) ([]byte, error) {
 	projection := bson.M{"_id": 0, "parsed_content": 1}
 	findOptions := options.FindOneOptions{Projection: projection}
 
-	var result bson.M
-	err := collection.FindOne(context.Background(), filter, &findOptions).Decode(&result)
+	esiCollection := client.Database("test").Collection("ESI_papers")
+
+	var esiResult map[string][]primitive.ObjectID
+	err := collection.FindOne(context.Background(), filter, &findOptions).Decode(&esiResult)
 
 	if err != nil {
 		log.Println(err)
 		return nil, err
 	}
-	jsonBytes, err := json.Marshal(result)
+
+	var results []interface{}
+	for _, id := range esiResult["parsed_content"] {
+		result := bson.M{}
+		err = esiCollection.FindOne(context.Background(), bson.M{"_id": id},
+			&options.FindOneOptions{Projection: bson.M{"_id": 0}}).Decode(result)
+		if err != nil {
+			log.Fatal(err)
+		}
+		results = append(results, result)
+	}
+	jsonBytes, err := json.Marshal(results)
 	if err != nil {
 		log.Println(err)
 		return nil, err
@@ -134,6 +157,7 @@ func GetEsi(client *mongo.Client, name string, title string) ([]byte, error) {
 	return jsonBytes, nil
 }
 
+// TODO: Delete from ESI_paper
 func DeleteEsi(client *mongo.Client, id string, name string) error {
 	collection := client.Database("test").Collection(name)
 	filter := bson.M{"_id": id}

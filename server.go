@@ -4,7 +4,8 @@ import (
 	esi "BUPT-lib/data_import"
 	journal "BUPT-lib/data_import"
 	news "BUPT-lib/data_import"
-	"BUPT-lib/data_retrieve"
+	myJson "BUPT-lib/data_retrieve"
+	search "BUPT-lib/data_retrieve"
 	"BUPT-lib/utils"
 	"github.com/labstack/echo/v4"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -23,7 +24,7 @@ func main() {
 	e.Static("/static", "static")
 	e.GET("/journals/top30", func(c echo.Context) error {
 		collection := mongoClient.Database("test").Collection("Journals")
-		JournalJson, err := data_retrieve.GetAllDocumentsAsJson(collection)
+		JournalJson, err := myJson.GetAllDocumentsAsJson(collection)
 		if err != nil {
 			return c.String(http.StatusInternalServerError, "Failed to retrieve")
 
@@ -199,14 +200,6 @@ func main() {
 			return c.JSONBlob(http.StatusOK, esiJson)
 		}
 	})
-	e.POST("/search/:parm", func(c echo.Context) error {
-		keyword := c.Param("parm")
-
-		// where and how to search
-		data_retrieve.SearchAll(keyword)
-
-		return nil
-	})
 	e.POST("/news", func(c echo.Context) error {
 		newsJson := c.FormValue("parm")
 
@@ -291,7 +284,7 @@ func main() {
 		}
 		err = esi.AddNews(mongoClient, file)
 		if err != nil {
-			return c.String(http.StatusInternalServerError, err.Error())
+			return c.String(http.StatusConflict, err.Error())
 		} else {
 			return c.String(http.StatusOK, "News Added")
 		}
@@ -397,6 +390,20 @@ func main() {
 			return c.String(http.StatusOK, "News Added")
 		}
 	})
+
+	e.GET("/search/all", func(c echo.Context) error {
+		keywords := c.FormValue("s")
+
+		// where and how to search
+		result, err := search.SearchESICollection(mongoClient, keywords)
+		if err != nil {
+			return c.String(http.StatusInternalServerError, "Failed to retrieve")
+		} else {
+			return c.JSONBlob(http.StatusOK, result)
+		}
+		return nil
+	})
+
 	e.Logger.Fatal(e.Start(":1323"))
 }
 

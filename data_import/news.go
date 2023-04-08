@@ -5,19 +5,21 @@ import (
 	"context"
 	"encoding/csv"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
 	"mime/multipart"
+	"strconv"
 	"time"
 )
 
 type News struct {
 	Id            string `json:"id"`
 	Title         string `json:"title"`
-	isFromOutside bool   `json:"outside"`
+	OutsideSource string `json:"source"`
 	Url           string `json:"url"`
 	Content       string `json:"content"`
 	Date          string `json:"date"`
@@ -37,6 +39,7 @@ type Conference struct {
 	Address      string `bson:"address"`
 }
 
+// Not used
 func UpdateNews(client *mongo.Client, jsonText string) error {
 	collection := client.Database("test").Collection("News")
 
@@ -59,6 +62,7 @@ func UpdateNews(client *mongo.Client, jsonText string) error {
 	return nil
 }
 
+// 基金项目
 func GetAnnouncement(client *mongo.Client, num uint, start uint) ([]byte, error) {
 	collection := client.Database("test").Collection("Announcement")
 
@@ -142,6 +146,7 @@ func AddAnnouncement(client *mongo.Client, news *multipart.FileHeader) error {
 	return nil
 }
 
+// 基金项目
 func ParseNewsAnnouncement(newsFile *multipart.FileHeader) ([]News, error) {
 	// Open the Excel file
 	tmpFile, err := newsFile.Open()
@@ -164,7 +169,7 @@ func ParseNewsAnnouncement(newsFile *multipart.FileHeader) ([]News, error) {
 		piece := News{
 			Id:            "",
 			Title:         record[0],
-			isFromOutside: true,
+			OutsideSource: "",
 			Url:           record[2],
 			Content:       "",
 			Date:          record[1],
@@ -180,6 +185,7 @@ func ParseNewsAnnouncement(newsFile *multipart.FileHeader) ([]News, error) {
 	return data, nil
 }
 
+// 外部采集新闻--领域新闻
 func GetNews(client *mongo.Client, num uint, start uint) ([]byte, error) {
 	collection := client.Database("test").Collection("News")
 
@@ -247,22 +253,26 @@ func AddNews(client *mongo.Client, news *multipart.FileHeader) error {
 		log.Println(err)
 		return err
 	}
-
+	failedNum := 0
+	successfulNum := 0
 	for _, data_ := range data {
 		_, err = collection.InsertOne(context.Background(), data_)
 		if err != nil {
 			log.Println(err)
-			return err
+			failedNum++
+		} else {
+			successfulNum++
 		}
 	}
-
-	if err != nil {
-		log.Println(err)
-		return err
+	if failedNum > 0 {
+		return errors.New("Successfully imported " + strconv.Itoa(successfulNum) +
+			" with " + strconv.Itoa(failedNum) + " failed")
+	} else {
+		return nil
 	}
-	return nil
 }
 
+// 外部采集新闻--领域新闻
 func ParseNews(newsFile *multipart.FileHeader) ([]News, error) {
 	// Open the Excel file
 	tmpFile, err := newsFile.Open()
@@ -285,7 +295,7 @@ func ParseNews(newsFile *multipart.FileHeader) ([]News, error) {
 		piece := News{
 			Id:            "",
 			Title:         record[0],
-			isFromOutside: true,
+			OutsideSource: record[4],
 			Url:           record[1],
 			Content:       "",
 			Date:          "",
@@ -375,6 +385,7 @@ func ParseOngoingConferences(newsFile *multipart.FileHeader) ([]Conference, erro
 	return data, nil
 }
 
+// 图书馆新闻 & 资源更新
 func GetLibNews(client *mongo.Client, num uint, start uint, newsType uint8) ([]byte, error) {
 	collection := client.Database("test").Collection("News")
 
@@ -454,6 +465,7 @@ func AddLibNews(client *mongo.Client, news *multipart.FileHeader, newsType uint8
 	return nil
 }
 
+// 图书馆新闻 & 资源更新
 func ParseLibNews(newsFile *multipart.FileHeader, newsType uint8) ([]News, error) {
 	// Open the Excel file
 	tmpFile, err := newsFile.Open()
@@ -476,7 +488,7 @@ func ParseLibNews(newsFile *multipart.FileHeader, newsType uint8) ([]News, error
 		piece := News{
 			Id:            "",
 			Title:         record[1],
-			isFromOutside: true,
+			OutsideSource: "",
 			Url:           record[3],
 			Content:       "",
 			Date:          record[2],
