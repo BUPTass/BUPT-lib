@@ -192,3 +192,38 @@ func contains(s []string, e string) bool {
 	}
 	return false
 }
+
+func SearchTeacher(client *mongo.Client, keyword string) ([]byte, error) {
+	collection := client.Database("test").Collection("SCS_Teacher")
+	regex := primitive.Regex{Pattern: keyword, Options: "i"}
+	filter := bson.M{"name": bson.M{"$regex": regex}}
+	projection := bson.M{
+		"_id":      0,
+		"name":     1,
+		"homepage": 1,
+	}
+	opts := options.Find().SetProjection(projection)
+	cur, err := collection.Find(context.Background(), filter, opts)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	defer cur.Close(context.Background())
+
+	var teachers []bson.M
+	for cur.Next(context.Background()) {
+		var teacher bson.M
+		if err := cur.Decode(&teacher); err != nil {
+			return nil, err
+		}
+		teachers = append(teachers, teacher)
+
+	}
+	jsonBytes, err := json.Marshal(teachers)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	return jsonBytes, nil
+
+}
