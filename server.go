@@ -395,13 +395,25 @@ func main() {
 		keywords := c.FormValue("s")
 
 		// where and how to search
-		result, err := search.SearchESICollection(mongoClient, keywords)
+		result, err := search.SearchAll(mongoClient, keywords)
 		if err != nil {
 			return c.String(http.StatusInternalServerError, "Failed to retrieve")
 		} else {
 			return c.JSONBlob(http.StatusOK, result)
 		}
-		return nil
+
+	})
+
+	e.GET("/search/article", func(c echo.Context) error {
+		keywords := c.FormValue("s")
+
+		// where and how to search
+		result, err := search.SearchArticle(mongoClient, keywords)
+		if err != nil {
+			return c.String(http.StatusInternalServerError, "Failed to retrieve")
+		} else {
+			return c.JSONBlob(http.StatusOK, result)
+		}
 	})
 
 	e.Logger.Fatal(e.Start(":1323"))

@@ -2,80 +2,155 @@ package data_retrieve
 
 import (
 	"context"
+	"encoding/json"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
 )
 
-func SearchAll(keyword string) {}
+func SearchAll(client *mongo.Client, keyword string) ([]byte, error) {
+	var searchResult struct {
+		ESI     []bson.M
+		Found   []bson.M
+		LibRes  []bson.M
+		LibAnn  []bson.M
+		Journal []bson.M
+	}
+	var err error
 
-func SearchNewsCollection(client *mongo.Client, keywords string, c string) ([]byte, error) {
-	collection := client.Database("test").Collection(c)
-	filter := bson.D{{"$text", bson.D{{"$search", keywords}}}}
-	sort := bson.D{{"score", bson.D{{"$meta", "textScore"}}}}
-	projection := bson.D{{"title", 1}, {"url", 1}, {"score", bson.D{{"$meta", "textScore"}}}, {"_id", 0}}
-	opts := options.Find().SetSort(sort).SetProjection(projection)
+	searchResult.ESI, err = searchESICollection(client, keyword)
+	if err != nil {
+		searchResult.ESI = []bson.M{}
+	}
+	searchResult.Found, err = searchCollection(client, keyword, "Announcement")
+	if err != nil {
+		searchResult.Found = []bson.M{}
+	}
+	searchResult.LibRes, err = searchNewsCollection(client, keyword, "News", 1)
+	if err != nil {
+		searchResult.LibRes = []bson.M{}
+	}
+	searchResult.LibAnn, err = searchNewsCollection(client, keyword, "News", 2)
+	if err != nil {
+		searchResult.LibAnn = []bson.M{}
+	}
+	searchResult.Journal, err = searchCollection(client, keyword, "CCF")
+	if err != nil {
+		searchResult.Journal = []bson.M{}
+	}
+
+	jsonBytes, err := json.Marshal(searchResult)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	return jsonBytes, nil
+}
+
+func SearchArticle(client *mongo.Client, keyword string) ([]byte, error) {
+	var searchResult struct {
+		ESI   []bson.M
+		Found []bson.M
+		News  []bson.M
+	}
+	var err error
+
+	searchResult.ESI, err = searchESICollection(client, keyword)
+	if err != nil {
+		searchResult.ESI = []bson.M{}
+	}
+	searchResult.Found, err = searchCollection(client, keyword, "Announcement")
+	if err != nil {
+		searchResult.Found = []bson.M{}
+	}
+	searchResult.News, err = searchNewsCollection(client, keyword, "News", 0)
+	if err != nil {
+		searchResult.News = []bson.M{}
+	}
+
+	jsonBytes, err := json.Marshal(searchResult)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	return jsonBytes, nil
+}
+
+func searchNewsCollection(client *mongo.Client, keyword string, colle string, newsType uint8) ([]bson.M, error) {
+	collection := client.Database("test").Collection(colle)
+	regex := primitive.Regex{Pattern: keyword, Options: "i"}
+	filter := bson.M{"title": bson.M{"$regex": regex}, "type": newsType}
+	projection := bson.M{
+		"_id":   0,
+		"title": 1,
+		"url":   1,
+	}
+	opts := options.Find().SetProjection(projection)
 	cur, err := collection.Find(context.Background(), filter, opts)
 	if err != nil {
 		log.Println(err)
 		return nil, err
 	}
 	defer cur.Close(context.Background())
-	/*
-		newsList := make([]struct {
-			Title string `json:"title"`
-			Time  int64  `json:"time"`
-			Url   string `json:"url"`
-		}, 0, num)
-		var itemCount uint
-		itemCount = 0
-		// iterate through the cursor and decode each document into a news entry struct
-		for cur.Next(context.Background()) {
-			var news News
 
-			err := cur.Decode(&news)
-			if err != nil {
-				log.Println(err)
-				return nil, err
-			}
-			itemCount++
-			if itemCount < start+1 {
-				continue
-			}
-			if itemCount > num+start {
-				break
-			}
-
-			reduced := struct {
-				Title string `json:"title"`
-				Time  int64  `json:"time"`
-				Url   string `json:"url"`
-			}{
-				Title: news.Title,
-				Time:  news.Time,
-				Url:   news.Url,
-			}
-			newsList = append(newsList, reduced)
-		}
-		if err := cur.Err(); err != nil {
-			log.Println(err)
+	var publications []bson.M
+	for cur.Next(context.Background()) {
+		var publication bson.M
+		if err := cur.Decode(&publication); err != nil {
 			return nil, err
 		}
-		jsonBytes, err := json.Marshal(newsList)
-		if err != nil {
-			log.Println(err)
-			return nil, err
-		}
-		return jsonBytes, nil
 
-	*/
-	return nil, nil
+		publications = append(publications, publication)
+
+	}
+	if err := cur.Err(); err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	return publications, nil
+
 }
 
-func SearchESICollection(client *mongo.Client, keywords string) ([]bson.M, error) {
+func searchCollection(client *mongo.Client, keyword string, colle string) ([]bson.M, error) {
+	collection := client.Database("test").Collection(colle)
+	regex := primitive.Regex{Pattern: keyword, Options: "i"}
+	filter := bson.M{"title": bson.M{"$regex": regex}}
+	projection := bson.M{
+		"_id":   0,
+		"title": 1,
+		"url":   1,
+	}
+	opts := options.Find().SetProjection(projection)
+	cur, err := collection.Find(context.Background(), filter, opts)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	defer cur.Close(context.Background())
 
-	collection := client.Database("test").Collection("ESI_paper")
+	var publications []bson.M
+	for cur.Next(context.Background()) {
+		var publication bson.M
+		if err := cur.Decode(&publication); err != nil {
+			return nil, err
+		}
+
+		publications = append(publications, publication)
+
+	}
+	if err := cur.Err(); err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	return publications, nil
+
+}
+
+func searchESICollection(client *mongo.Client, keywords string) ([]bson.M, error) {
+
+	collection := client.Database("test").Collection("ESI_papers")
 
 	filter := bson.D{{"$text", bson.D{{"$search", keywords}}}}
 	sort := bson.D{{"score", bson.D{{"$meta", "textScore"}}}}
@@ -97,7 +172,7 @@ func SearchESICollection(client *mongo.Client, keywords string) ([]bson.M, error
 		if err := cur.Decode(&paper); err != nil {
 			return nil, err
 		}
-		doi := paper["doi"].(string)
+		doi := paper["DOI"].(string)
 		if !contains(doiS, doi) {
 			papers = append(papers, paper)
 		}

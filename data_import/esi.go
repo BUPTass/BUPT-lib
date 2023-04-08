@@ -114,9 +114,6 @@ func GetAllEsi(client *mongo.Client, name string) ([]byte, error) {
 		log.Println(err)
 		return nil, err
 	}
-	if string(jsonBytes) == "null" {
-		jsonBytes = []byte("[]")
-	}
 	return jsonBytes, nil
 }
 
@@ -150,9 +147,6 @@ func GetEsi(client *mongo.Client, name string, title string) ([]byte, error) {
 	if err != nil {
 		log.Println(err)
 		return nil, err
-	}
-	if string(jsonBytes) == "null" {
-		jsonBytes = []byte("[]")
 	}
 	return jsonBytes, nil
 }
