@@ -32,11 +32,13 @@ type News struct {
 
 type Conference struct {
 	Abbreviation string `bson:"abbreviation"`
-	FullName     string `bson:"full_name"`
 	StartTime    string `bson:"start_time"`
 	EndTime      string `bson:"end_time"`
 	Link         string `bson:"link"`
-	Address      string `bson:"address"`
+	Place        string `bson:"place"`
+	Type         string `bson:"type"`
+	CcfRank      string `bson:"ccf"`
+	Deadline     string `bson:"deadline"`
 }
 
 // Not used
@@ -297,7 +299,7 @@ func ParseNews(newsFile *multipart.FileHeader) ([]News, error) {
 			Title:         record[0],
 			OutsideSource: record[4],
 			Url:           record[1],
-			Content:       "",
+			Content:       record[2],
 			Date:          "",
 			Time:          castRFC1123(record[3]),
 			CreateTime:    time.Now().Unix(),
@@ -373,11 +375,13 @@ func ParseOngoingConferences(newsFile *multipart.FileHeader) ([]Conference, erro
 
 		piece := Conference{
 			Abbreviation: record[0],
-			FullName:     record[1],
-			StartTime:    record[2],
-			EndTime:      record[3],
-			Link:         record[4],
-			Address:      record[5],
+			Link:         record[1],
+			Place:        record[2],
+			Deadline:     record[3],
+			StartTime:    record[4],
+			EndTime:      record[5],
+			Type:         record[6],
+			CcfRank:      record[7],
 		}
 		data = append(data, piece)
 	}

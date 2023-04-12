@@ -13,7 +13,7 @@ import (
 func SearchAll(client *mongo.Client, keyword string) ([]byte, error) {
 	var searchResult struct {
 		ESI     []bson.M
-		Found   []bson.M
+		Fund    []bson.M
 		LibRes  []bson.M
 		LibAnn  []bson.M
 		Journal []bson.M
@@ -24,9 +24,9 @@ func SearchAll(client *mongo.Client, keyword string) ([]byte, error) {
 	if err != nil {
 		searchResult.ESI = []bson.M{}
 	}
-	searchResult.Found, err = searchCollection(client, keyword, "Announcement")
+	searchResult.Fund, err = searchCollection(client, keyword, "Announcement")
 	if err != nil {
-		searchResult.Found = []bson.M{}
+		searchResult.Fund = []bson.M{}
 	}
 	searchResult.LibRes, err = searchNewsCollection(client, keyword, "News", 1)
 	if err != nil {
@@ -51,9 +51,9 @@ func SearchAll(client *mongo.Client, keyword string) ([]byte, error) {
 
 func SearchArticle(client *mongo.Client, keyword string) ([]byte, error) {
 	var searchResult struct {
-		ESI   []bson.M
-		Found []bson.M
-		News  []bson.M
+		ESI  []bson.M
+		Fund []bson.M
+		News []bson.M
 	}
 	var err error
 
@@ -61,9 +61,9 @@ func SearchArticle(client *mongo.Client, keyword string) ([]byte, error) {
 	if err != nil {
 		searchResult.ESI = []bson.M{}
 	}
-	searchResult.Found, err = searchCollection(client, keyword, "Announcement")
+	searchResult.Fund, err = searchCollection(client, keyword, "Announcement")
 	if err != nil {
-		searchResult.Found = []bson.M{}
+		searchResult.Fund = []bson.M{}
 	}
 	searchResult.News, err = searchNewsCollection(client, keyword, "News", 0)
 	if err != nil {
