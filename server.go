@@ -212,45 +212,48 @@ func main() {
 			return c.String(http.StatusOK, "Successfully Update News")
 		}
 	})
-	e.GET("/news/announcement", func(c echo.Context) error {
-		num, err := strconv.Atoi(c.FormValue("num"))
-		if err != nil || num < 0 {
-			num = 10
-		}
-		start, err := strconv.Atoi(c.FormValue("start"))
-		if err != nil || start < 0 {
-			start = 0
-		}
-		newsJson, err := news.GetAnnouncement(mongoClient, uint(num), uint(start))
 
-		if err != nil {
-			return c.String(http.StatusInternalServerError, "Failed to retrieve")
-		} else {
-			return c.JSONBlob(http.StatusOK, newsJson)
-		}
-	})
-	e.GET("/news/announcement/total", func(c echo.Context) error {
+	/*
+		e.GET("/news/announcement", func(c echo.Context) error {
+			num, err := strconv.Atoi(c.FormValue("num"))
+			if err != nil || num < 0 {
+				num = 10
+			}
+			start, err := strconv.Atoi(c.FormValue("start"))
+			if err != nil || start < 0 {
+				start = 0
+			}
+			newsJson, err := news.GetAnnouncement(mongoClient, uint(num), uint(start))
 
-		totalNum, err := news.CountNews(mongoClient, 3)
-		if err != nil {
-			return c.String(http.StatusInternalServerError, "Failed to retrieve")
-		} else {
-			return c.String(http.StatusOK, strconv.FormatInt(totalNum, 10))
-		}
-	})
-	e.POST("/news/announcement", func(c echo.Context) error {
-		file, err := c.FormFile("csv")
+			if err != nil {
+				return c.String(http.StatusInternalServerError, "Failed to retrieve")
+			} else {
+				return c.JSONBlob(http.StatusOK, newsJson)
+			}
+		})
+		e.GET("/news/announcement/total", func(c echo.Context) error {
 
-		if err != nil {
-			return c.String(http.StatusBadRequest, err.Error())
-		}
-		err = news.AddAnnouncement(mongoClient, file)
-		if err != nil {
-			return c.String(http.StatusInternalServerError, err.Error())
-		} else {
-			return c.String(http.StatusOK, "News Added")
-		}
-	})
+			totalNum, err := news.CountNews(mongoClient, 3)
+			if err != nil {
+				return c.String(http.StatusInternalServerError, "Failed to retrieve")
+			} else {
+				return c.String(http.StatusOK, strconv.FormatInt(totalNum, 10))
+			}
+		})
+		e.POST("/news/announcement", func(c echo.Context) error {
+			file, err := c.FormFile("csv")
+
+			if err != nil {
+				return c.String(http.StatusBadRequest, err.Error())
+			}
+			err = news.AddAnnouncement(mongoClient, file)
+			if err != nil {
+				return c.String(http.StatusInternalServerError, err.Error())
+			} else {
+				return c.String(http.StatusOK, "News Added")
+			}
+		})
+	*/
 	e.GET("/news/news", func(c echo.Context) error {
 		num, err := strconv.Atoi(c.FormValue("num"))
 		if err != nil || num < 0 {

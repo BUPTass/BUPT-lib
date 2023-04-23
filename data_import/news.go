@@ -41,7 +41,15 @@ type Conference struct {
 	Deadline     string `bson:"deadline"`
 }
 
-// Not used
+type EResource struct {
+	Name    string `json:"name"`
+	Url     string `json:"url"`
+	Subject string `json:"subject"`
+	Type    string `json:"type"`
+	Intro   string `json:"intro"`
+}
+
+// UpdateNews Not used
 func UpdateNews(client *mongo.Client, jsonText string) error {
 	collection := client.Database("test").Collection("News")
 
@@ -64,7 +72,7 @@ func UpdateNews(client *mongo.Client, jsonText string) error {
 	return nil
 }
 
-// 基金项目
+// GetAnnouncement 基金项目
 func GetAnnouncement(client *mongo.Client, num uint, start uint) ([]byte, error) {
 	collection := client.Database("test").Collection("Announcement")
 
@@ -126,6 +134,7 @@ func GetAnnouncement(client *mongo.Client, num uint, start uint) ([]byte, error)
 	return jsonBytes, nil
 }
 
+// AddAnnouncement 添加基金项目
 func AddAnnouncement(client *mongo.Client, news *multipart.FileHeader) error {
 	collection := client.Database("test").Collection("Announcement")
 	data, err := ParseNewsAnnouncement(news)
@@ -148,7 +157,7 @@ func AddAnnouncement(client *mongo.Client, news *multipart.FileHeader) error {
 	return nil
 }
 
-// 基金项目
+// ParseNewsAnnouncement 解析基金项目
 func ParseNewsAnnouncement(newsFile *multipart.FileHeader) ([]News, error) {
 	// Open the Excel file
 	tmpFile, err := newsFile.Open()
@@ -187,7 +196,7 @@ func ParseNewsAnnouncement(newsFile *multipart.FileHeader) ([]News, error) {
 	return data, nil
 }
 
-// 外部采集新闻--领域新闻
+// GetNews 外部采集新闻--领域新闻
 func GetNews(client *mongo.Client, num uint, start uint) ([]byte, error) {
 	collection := client.Database("test").Collection("News")
 
@@ -274,7 +283,7 @@ func AddNews(client *mongo.Client, news *multipart.FileHeader) error {
 	}
 }
 
-// 外部采集新闻--领域新闻
+// ParseNews 解析外部采集新闻--领域新闻
 func ParseNews(newsFile *multipart.FileHeader) ([]News, error) {
 	// Open the Excel file
 	tmpFile, err := newsFile.Open()
@@ -389,7 +398,7 @@ func ParseOngoingConferences(newsFile *multipart.FileHeader) ([]Conference, erro
 	return data, nil
 }
 
-// 图书馆新闻 & 资源更新
+// GetLibNews 图书馆新闻 & 资源更新
 func GetLibNews(client *mongo.Client, num uint, start uint, newsType uint8) ([]byte, error) {
 	collection := client.Database("test").Collection("News")
 
@@ -469,7 +478,7 @@ func AddLibNews(client *mongo.Client, news *multipart.FileHeader, newsType uint8
 	return nil
 }
 
-// 图书馆新闻 & 资源更新
+// ParseLibNews 图书馆新闻 & 资源更新
 func ParseLibNews(newsFile *multipart.FileHeader, newsType uint8) ([]News, error) {
 	// Open the Excel file
 	tmpFile, err := newsFile.Open()
