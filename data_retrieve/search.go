@@ -81,7 +81,7 @@ func SearchArticle(client *mongo.Client, keyword string) ([]byte, error) {
 func searchNewsCollection(client *mongo.Client, keyword string, colle string, newsType uint8) ([]bson.M, error) {
 	collection := client.Database("test").Collection(colle)
 	regex := primitive.Regex{Pattern: keyword, Options: "i"}
-	filter := bson.M{"title": bson.M{"$regex": regex}, "type": newsType}
+	filter := bson.M{"title": bson.M{"$regex": regex}, "type": newsType, "valid": true}
 	projection := bson.M{
 		"_id":   0,
 		"title": 1,

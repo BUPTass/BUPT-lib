@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
@@ -17,7 +18,6 @@ import (
 )
 
 type News struct {
-	Id            string `json:"id"`
 	Title         string `json:"title"`
 	OutsideSource string `json:"source"`
 	Url           string `json:"url"`
@@ -27,7 +27,7 @@ type News struct {
 	CreateTime    int64  `json:"create_time"`
 	UpdateTime    int64  `json:"update_time"`
 	Type          uint8  `json:"type"`
-	isVaild       bool   `json:"valid"`
+	IsValid       bool   `bson:"valid"`
 }
 
 type Conference struct {
@@ -41,28 +41,7 @@ type Conference struct {
 	Deadline     string `bson:"deadline"`
 }
 
-// UpdateNews Not used
-func UpdateNews(client *mongo.Client, jsonText string) error {
-	collection := client.Database("test").Collection("News")
-
-	var updatedNews News
-	err := json.Unmarshal([]byte(jsonText), &updatedNews)
-	if err != nil {
-		log.Println(err)
-		return err
-	}
-
-	filter := bson.M{"_id": updatedNews.Id}
-	// update := bson.M{"$set": bson.M{"image": imageUri}}
-	update := bson.M{"$set": updatedNews}
-
-	_, err = collection.UpdateOne(context.Background(), filter, update)
-	if err != nil {
-		log.Println(err)
-		return err
-	}
-	return nil
-}
+/*
 
 // GetAnnouncement 基金项目
 func GetAnnouncement(client *mongo.Client, num uint, start uint) ([]byte, error) {
@@ -180,19 +159,20 @@ func ParseNewsAnnouncement(newsFile *multipart.FileHeader) ([]News, error) {
 			CreateTime:    time.Now().Unix(),
 			UpdateTime:    time.Now().Unix(),
 			Type:          0,
-			isVaild:       true,
+			IsValid:       true,
 		}
 		data = append(data, piece)
 	}
 
 	return data, nil
 }
+*/
 
 // GetNews 外部采集新闻--领域新闻
 func GetNews(client *mongo.Client, num uint, start uint) ([]byte, error) {
 	collection := client.Database("test").Collection("News")
 
-	filter := bson.M{}
+	filter := bson.M{"valid": true}
 	opts := options.Find().SetSort(bson.M{"time": -1})
 
 	cur, err := collection.Find(context.Background(), filter, opts)
@@ -203,15 +183,21 @@ func GetNews(client *mongo.Client, num uint, start uint) ([]byte, error) {
 	defer cur.Close(context.Background())
 
 	newsList := make([]struct {
-		Title string `json:"title"`
-		Time  int64  `json:"time"`
-		Url   string `json:"url"`
+		Id    primitive.ObjectID `json:"id" bson:"_id"`
+		Title string             `json:"title"`
+		Time  int64              `json:"time"`
+		Url   string             `json:"url"`
 	}, 0, num)
 	var itemCount uint
 	itemCount = 0
 	// iterate through the cursor and decode each document into a news entry struct
 	for cur.Next(context.Background()) {
-		var news News
+		var news struct {
+			Id    primitive.ObjectID `json:"id" bson:"_id"`
+			Title string             `json:"title"`
+			Time  int64              `json:"time"`
+			Url   string             `json:"url"`
+		}
 
 		err := cur.Decode(&news)
 		if err != nil {
@@ -227,10 +213,12 @@ func GetNews(client *mongo.Client, num uint, start uint) ([]byte, error) {
 		}
 
 		reduced := struct {
-			Title string `json:"title"`
-			Time  int64  `json:"time"`
-			Url   string `json:"url"`
+			Id    primitive.ObjectID `json:"id" bson:"_id"`
+			Title string             `json:"title"`
+			Time  int64              `json:"time"`
+			Url   string             `json:"url"`
 		}{
+			Id:    news.Id,
 			Title: news.Title,
 			Time:  news.Time,
 			Url:   news.Url,
@@ -249,6 +237,22 @@ func GetNews(client *mongo.Client, num uint, start uint) ([]byte, error) {
 	return jsonBytes, nil
 }
 
+func MarkNewsInvalid(client *mongo.Client, id primitive.ObjectID) error {
+	collection := client.Database("test").Collection("News")
+
+	filter := bson.M{"_id": id}
+	update := bson.M{"$set": bson.M{"valid": false}}
+
+	_, err := collection.UpdateOne(context.Background(), filter, update)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+
+	return nil
+}
+
+// AddNews 外部采集新闻--领域新闻
 func AddNews(client *mongo.Client, news *multipart.FileHeader) error {
 	collection := client.Database("test").Collection("News")
 	data, err := ParseNews(news)
@@ -296,7 +300,6 @@ func ParseNews(newsFile *multipart.FileHeader) ([]News, error) {
 	for _, record := range records[1:] {
 
 		piece := News{
-			Id:            "",
 			Title:         record[0],
 			OutsideSource: record[4],
 			Url:           record[1],
@@ -306,7 +309,7 @@ func ParseNews(newsFile *multipart.FileHeader) ([]News, error) {
 			CreateTime:    time.Now().Unix(),
 			UpdateTime:    time.Now().Unix(),
 			Type:          0,
-			isVaild:       true,
+			IsValid:       true,
 		}
 		data = append(data, piece)
 	}
@@ -491,7 +494,6 @@ func ParseLibNews(newsFile *multipart.FileHeader, newsType uint8) ([]News, error
 	// Loop over CSV records from Row 1
 	for _, record := range records[1:] {
 		piece := News{
-			Id:            "",
 			Title:         record[1],
 			OutsideSource: "",
 			Url:           record[3],
@@ -501,7 +503,7 @@ func ParseLibNews(newsFile *multipart.FileHeader, newsType uint8) ([]News, error
 			CreateTime:    time.Now().Unix(),
 			UpdateTime:    time.Now().Unix(),
 			Type:          uint8(newsType),
-			isVaild:       true,
+			IsValid:       true,
 		}
 		data = append(data, piece)
 	}

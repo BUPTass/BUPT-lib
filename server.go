@@ -10,7 +10,9 @@ import (
 	search "BUPT-lib/data_retrieve"
 	"BUPT-lib/hot"
 	"BUPT-lib/utils"
+	"errors"
 	"github.com/labstack/echo/v4"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
@@ -215,17 +217,6 @@ func main() {
 			return c.JSONBlob(http.StatusOK, esiJson)
 		}
 	})
-	e.POST("/news", func(c echo.Context) error {
-		newsJson := c.FormValue("parm")
-
-		err := news.UpdateNews(mongoClient, newsJson)
-
-		if err != nil {
-			return c.String(http.StatusInternalServerError, "Failed to update")
-		} else {
-			return c.String(http.StatusOK, "Successfully Update News")
-		}
-	})
 
 	e.GET("/index/column", func(c echo.Context) error {
 		order := column.GetOrder()
@@ -321,6 +312,21 @@ func main() {
 		} else {
 			return c.String(http.StatusOK, "News Added")
 		}
+	})
+	e.DELETE("/news/news/:id", func(c echo.Context) error {
+		id, err := primitive.ObjectIDFromHex(c.Param("id"))
+		if err != nil {
+			return c.NoContent(http.StatusBadRequest)
+		}
+		err = news.MarkNewsInvalid(mongoClient, id)
+		if err != nil {
+			if errors.Is(err, mongo.ErrNoDocuments) {
+				return c.NoContent(http.StatusBadRequest)
+			} else {
+				return c.String(http.StatusInternalServerError, err.Error())
+			}
+		}
+		return c.NoContent(http.StatusOK)
 	})
 	e.GET("/news/conf", func(c echo.Context) error {
 		newsJson, err := news.GetOngoingConferences(mongoClient)
