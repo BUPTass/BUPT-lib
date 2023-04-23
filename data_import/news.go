@@ -2,6 +2,7 @@ package data
 
 import (
 	myJson "BUPT-lib/data_retrieve"
+	"BUPT-lib/hot"
 	"context"
 	"encoding/csv"
 	"encoding/json"
@@ -18,16 +19,18 @@ import (
 )
 
 type News struct {
-	Title         string `json:"title"`
-	OutsideSource string `json:"source"`
-	Url           string `json:"url"`
-	Content       string `json:"content"`
-	Date          string `json:"date"`
-	Time          int64  `json:"time"`
-	CreateTime    int64  `json:"create_time"`
-	UpdateTime    int64  `json:"update_time"`
-	Type          uint8  `json:"type"`
-	IsValid       bool   `bson:"valid"`
+	Title         string  `json:"title"`
+	OutsideSource string  `json:"source"`
+	Url           string  `json:"url"`
+	Content       string  `json:"content"`
+	Date          string  `json:"date"`
+	Time          int64   `json:"time"`
+	CreateTime    int64   `json:"create_time"`
+	UpdateTime    int64   `json:"update_time"`
+	Type          uint8   `json:"type"`
+	Hits          int64   `bson:"hits"`
+	Score         float64 `bson:"score"`
+	IsValid       bool    `bson:"valid"`
 }
 
 type Conference struct {
@@ -237,6 +240,64 @@ func GetNews(client *mongo.Client, num uint, start uint) ([]byte, error) {
 	return jsonBytes, nil
 }
 
+func GetNewsByScore(client *mongo.Client, num uint, start uint) ([]byte, error) {
+	collection := client.Database("test").Collection("News")
+
+	// Calculate the score of each news based on its type and time
+	matchStage := bson.D{{"$match", bson.D{{"valid", true}}}}
+	sortStage := bson.D{{"$sort", bson.M{"score": -1}}}
+	skipStage := bson.D{{"$skip", start}}
+	limitStage := bson.D{{"$limit", num}}
+
+	// Create an aggregation pipeline with the match, addFields, sort, skip, and limit stages
+	pipeline := mongo.Pipeline{matchStage, sortStage, skipStage, limitStage}
+
+	cur, err := collection.Aggregate(context.Background(), pipeline)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	defer cur.Close(context.Background())
+
+	newsList := make([]struct {
+		Title string `json:"title"`
+		Time  int64  `json:"time"`
+		Url   string `json:"url"`
+	}, 0, num)
+
+	// Iterate through the cursor and decode each document into a news entry struct
+	for cur.Next(context.Background()) {
+		var news News
+
+		err := cur.Decode(&news)
+		if err != nil {
+			log.Println(err)
+			return nil, err
+		}
+
+		reduced := struct {
+			Title string `json:"title"`
+			Time  int64  `json:"time"`
+			Url   string `json:"url"`
+		}{
+			Title: news.Title,
+			Time:  news.Time,
+			Url:   news.Url,
+		}
+		newsList = append(newsList, reduced)
+	}
+	if err := cur.Err(); err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	jsonBytes, err := json.Marshal(newsList)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	return jsonBytes, nil
+}
+
 func MarkNewsInvalid(client *mongo.Client, id primitive.ObjectID) error {
 	collection := client.Database("test").Collection("News")
 
@@ -309,8 +370,10 @@ func ParseNews(newsFile *multipart.FileHeader) ([]News, error) {
 			CreateTime:    time.Now().Unix(),
 			UpdateTime:    time.Now().Unix(),
 			Type:          0,
+			Hits:          0,
 			IsValid:       true,
 		}
+		piece.Score = hot.CalcNewsScore(piece.Time, piece.Hits)
 		data = append(data, piece)
 	}
 
@@ -503,8 +566,10 @@ func ParseLibNews(newsFile *multipart.FileHeader, newsType uint8) ([]News, error
 			CreateTime:    time.Now().Unix(),
 			UpdateTime:    time.Now().Unix(),
 			Type:          uint8(newsType),
+			Hits:          0,
 			IsValid:       true,
 		}
+		piece.Score = hot.CalcNewsScore(piece.Time, piece.Hits)
 		data = append(data, piece)
 	}
 
@@ -521,7 +586,7 @@ func CountNews(client *mongo.Client, newsType int) (int64, error) {
 		fallthrough
 	case 0:
 		collection = client.Database("test").Collection("News")
-		filter = bson.M{"type": newsType}
+		filter = bson.M{"type": newsType, "valid": true}
 	case 3:
 		collection = client.Database("test").Collection("Announcement")
 		filter = bson.M{}

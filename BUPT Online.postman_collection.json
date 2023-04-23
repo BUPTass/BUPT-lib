@@ -612,13 +612,52 @@
 							"formdata": []
 						},
 						"url": {
-							"raw": "{{URL}}/news/news?num=50&start=0",
+							"raw": "{{URL}}/news/news/time?num=50&start=0",
 							"host": [
 								"{{URL}}"
 							],
 							"path": [
 								"news",
-								"news"
+								"news",
+								"time"
+							],
+							"query": [
+								{
+									"key": "num",
+									"value": "50",
+									"description": "default: 50"
+								},
+								{
+									"key": "start",
+									"value": "0"
+								}
+							]
+						},
+						"description": "图像为目前二进制，后面会改成地址"
+					},
+					"response": []
+				},
+				{
+					"name": "新闻数据采集 热度排序",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{URL}}/news/news/hot?num=50&start=0",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"news",
+								"news",
+								"hot"
 							],
 							"query": [
 								{
@@ -831,6 +870,77 @@
 								"news",
 								"news",
 								"total"
+							]
+						},
+						"description": "图像为目前二进制，后面会改成地址"
+					},
+					"response": []
+				},
+				{
+					"name": "删除新闻",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/news/news/:id",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"news",
+								"news",
+								":id"
+							],
+							"query": [
+								{
+									"key": "date",
+									"value": null,
+									"description": "会加入时间",
+									"disabled": true
+								}
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "64453abe7d1323f4cd90e551",
+									"description": "get返回的数据库自动生成的主键"
+								}
+							]
+						},
+						"description": "图像为目前二进制，后面会改成地址"
+					},
+					"response": []
+				},
+				{
+					"name": "点击新闻",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/news/news/:id/hit",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"news",
+								"news",
+								":id",
+								"hit"
+							],
+							"query": [
+								{
+									"key": "date",
+									"value": null,
+									"description": "会加入时间",
+									"disabled": true
+								}
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "",
+									"description": "get返回的数据库自动生成的主键，对应一个文件，或者说一期"
+								}
 							]
 						},
 						"description": "图像为目前二进制，后面会改成地址"
@@ -1083,7 +1193,7 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{URL}}/index/column?n=ESI",
+							"raw": "{{URL}}/index/column?n=LibN",
 							"host": [
 								"{{URL}}"
 							],
@@ -1094,7 +1204,7 @@
 							"query": [
 								{
 									"key": "n",
-									"value": "ESI"
+									"value": "LibN"
 								}
 							]
 						}

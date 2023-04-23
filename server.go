@@ -12,6 +12,7 @@ import (
 	"BUPT-lib/utils"
 	"errors"
 	"github.com/labstack/echo/v4"
+	"github.com/robfig/cron/v3"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -34,6 +35,15 @@ func main() {
 	column.RecordClick("LibN")
 	column.RecordClick("CCF")
 	column.RecordClick("eResource")
+	crontab := cron.New(cron.WithSeconds())
+	task := func() {
+		hot.UpdateNewsScore(mongoClient)
+	}
+	spec := "0 */5 * * * ?"
+	crontab.AddFunc(spec, task)
+	crontab.Start()
+	hot.UpdateNewsScore(mongoClient)
+
 	e := echo.New()
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "BUPT Library API backend")
@@ -274,7 +284,7 @@ func main() {
 			}
 		})
 	*/
-	e.GET("/news/news", func(c echo.Context) error {
+	e.GET("/news/news/time", func(c echo.Context) error {
 		num, err := strconv.Atoi(c.FormValue("num"))
 		if err != nil || num < 0 {
 			num = 10
@@ -284,6 +294,23 @@ func main() {
 			start = 0
 		}
 		newsJson, err := news.GetNews(mongoClient, uint(num), uint(start))
+
+		if err != nil {
+			return c.String(http.StatusInternalServerError, "Failed to retrieve")
+		} else {
+			return c.JSONBlob(http.StatusOK, newsJson)
+		}
+	})
+	e.GET("/news/news/hot", func(c echo.Context) error {
+		num, err := strconv.Atoi(c.FormValue("num"))
+		if err != nil || num < 0 {
+			num = 10
+		}
+		start, err := strconv.Atoi(c.FormValue("start"))
+		if err != nil || start < 0 {
+			start = 0
+		}
+		newsJson, err := news.GetNewsByScore(mongoClient, uint(num), uint(start))
 
 		if err != nil {
 			return c.String(http.StatusInternalServerError, "Failed to retrieve")
@@ -326,6 +353,14 @@ func main() {
 				return c.String(http.StatusInternalServerError, err.Error())
 			}
 		}
+		return c.NoContent(http.StatusOK)
+	})
+	e.POST("/news/news/:id/hit", func(c echo.Context) error {
+		id, err := primitive.ObjectIDFromHex(c.Param("id"))
+		if err != nil {
+			return c.NoContent(http.StatusBadRequest)
+		}
+		hot.IncrementNewsHits(mongoClient, id)
 		return c.NoContent(http.StatusOK)
 	})
 	e.GET("/news/conf", func(c echo.Context) error {
