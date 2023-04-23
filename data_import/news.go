@@ -41,14 +41,6 @@ type Conference struct {
 	Deadline     string `bson:"deadline"`
 }
 
-type EResource struct {
-	Name    string `json:"name"`
-	Url     string `json:"url"`
-	Subject string `json:"subject"`
-	Type    string `json:"type"`
-	Intro   string `json:"intro"`
-}
-
 // UpdateNews Not used
 func UpdateNews(client *mongo.Client, jsonText string) error {
 	collection := client.Database("test").Collection("News")

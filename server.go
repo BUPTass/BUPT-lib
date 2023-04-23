@@ -4,6 +4,7 @@ import (
 	esi "BUPT-lib/data_import"
 	journal "BUPT-lib/data_import"
 	news "BUPT-lib/data_import"
+	outsideSource "BUPT-lib/data_import"
 	people "BUPT-lib/data_import"
 	myJson "BUPT-lib/data_retrieve"
 	search "BUPT-lib/data_retrieve"
@@ -408,6 +409,28 @@ func main() {
 			return c.String(http.StatusOK, "Teachers Added")
 		}
 	})
+	e.GET("/e-resource", func(c echo.Context) error {
+		newsJson, err := outsideSource.GetEResource(mongoClient)
+
+		if err != nil {
+			return c.String(http.StatusInternalServerError, "Failed to retrieve")
+		} else {
+			return c.JSONBlob(http.StatusOK, newsJson)
+		}
+	})
+	e.PUT("/e-resource", func(c echo.Context) error {
+		file, err := c.FormFile("csv")
+
+		if err != nil {
+			return c.String(http.StatusBadRequest, err.Error())
+		}
+		err = outsideSource.AddEResource(mongoClient, file)
+		if err != nil {
+			return c.String(http.StatusInternalServerError, err.Error())
+		} else {
+			return c.String(http.StatusOK, "E Resources Added")
+		}
+	})
 
 	e.GET("/search/all", func(c echo.Context) error {
 		keywords := c.FormValue("s")
@@ -436,6 +459,18 @@ func main() {
 		keywords := c.FormValue("s")
 
 		result, err := search.SearchTeacher(mongoClient, keywords)
+		if err != nil {
+			return c.String(http.StatusInternalServerError, "Failed to retrieve")
+		} else {
+			return c.JSONBlob(http.StatusOK, result)
+		}
+
+	})
+
+	e.GET("/search/e-resource", func(c echo.Context) error {
+		keywords := c.FormValue("s")
+
+		result, err := search.SearchEResource(mongoClient, keywords)
 		if err != nil {
 			return c.String(http.StatusInternalServerError, "Failed to retrieve")
 		} else {

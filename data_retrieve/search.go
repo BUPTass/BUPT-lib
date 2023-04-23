@@ -227,3 +227,46 @@ func SearchTeacher(client *mongo.Client, keyword string) ([]byte, error) {
 	return jsonBytes, nil
 
 }
+
+func SearchEResource(client *mongo.Client, keyword string) ([]byte, error) {
+	collection := client.Database("test").Collection("EResource")
+	regex := primitive.Regex{Pattern: keyword, Options: "i"}
+	filter := bson.M{
+		"$or": []bson.M{
+			{"name": bson.M{"$regex": regex}},
+			{"subject": bson.M{"$regex": regex}},
+			{"intro": bson.M{"$regex": regex}},
+		},
+	}
+	projection := bson.M{"_id": 0}
+	opts := options.Find().SetProjection(projection)
+	cur, err := collection.Find(context.Background(), filter, opts)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	defer cur.Close(context.Background())
+
+	var eResources []bson.M
+	for cur.Next(context.Background()) {
+		var eResource bson.M
+		if err := cur.Decode(&eResource); err != nil {
+			return nil, err
+		}
+
+		eResources = append(eResources, eResource)
+
+	}
+	if err := cur.Err(); err != nil {
+		log.Println(err)
+		return nil, err
+	}
+
+	jsonBytes, err := json.Marshal(eResources)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	return jsonBytes, nil
+
+}
