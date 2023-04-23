@@ -4,6 +4,7 @@ go 1.19
 
 require (
 	github.com/labstack/echo/v4 v4.10.0
+	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/tealeg/xlsx v1.0.5
 	go.mongodb.org/mongo-driver v1.11.1
 )

@@ -8,6 +8,7 @@ import (
 	people "BUPT-lib/data_import"
 	myJson "BUPT-lib/data_retrieve"
 	search "BUPT-lib/data_retrieve"
+	"BUPT-lib/hot"
 	"BUPT-lib/utils"
 	"github.com/labstack/echo/v4"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -15,10 +16,22 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 func main() {
 	mongoClient := ConnectToMongodb("mongodb://mongodb_container:27017")
+	var column hot.ColumnOrder
+	column.Init()
+	column.RecordClick("ESIC")
+	column.RecordClick("ESIH")
+	column.RecordClick("ESIC")
+	column.RecordClick("ESIH")
+	column.RecordClick("Conf")
+	column.RecordClick("News")
+	column.RecordClick("LibN")
+	column.RecordClick("CCF")
+	column.RecordClick("eResource")
 	e := echo.New()
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "BUPT Library API backend")
@@ -211,6 +224,21 @@ func main() {
 			return c.String(http.StatusInternalServerError, "Failed to update")
 		} else {
 			return c.String(http.StatusOK, "Successfully Update News")
+		}
+	})
+
+	e.GET("/index/column", func(c echo.Context) error {
+		order := column.GetOrder()
+		return c.String(http.StatusOK, strings.Join(order, "\n"))
+
+	})
+	e.POST("/index/column", func(c echo.Context) error {
+		colNmae := c.FormValue("n")
+		err := column.RecordClickChecked(colNmae)
+		if err != nil {
+			return c.String(http.StatusBadRequest, "Invalid Column")
+		} else {
+			return c.NoContent(http.StatusOK)
 		}
 	})
 

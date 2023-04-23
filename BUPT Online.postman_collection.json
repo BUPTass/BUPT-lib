@@ -6,7 +6,7 @@
 	},
 	"item": [
 		{
-			"name": "Journal&Merting",
+			"name": "Journal&Meeting",
 			"item": [
 				{
 					"name": "发文期刊前30",
@@ -500,43 +500,6 @@
 			"name": "News",
 			"item": [
 				{
-					"name": "基金项目",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": []
-						},
-						"url": {
-							"raw": "{{URL}}/news/announcement?num=1&start=0",
-							"host": [
-								"{{URL}}"
-							],
-							"path": [
-								"news",
-								"announcement"
-							],
-							"query": [
-								{
-									"key": "num",
-									"value": "1",
-									"description": "default: 50"
-								},
-								{
-									"key": "start",
-									"value": "0"
-								}
-							]
-						},
-						"description": "图像为目前二进制，后面会改成地址"
-					},
-					"response": []
-				},
-				{
 					"name": "图书馆动态 最新资源",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
@@ -649,7 +612,7 @@
 							"formdata": []
 						},
 						"url": {
-							"raw": "{{URL}}/news/news?num=50",
+							"raw": "{{URL}}/news/news?num=50&start=0",
 							"host": [
 								"{{URL}}"
 							],
@@ -662,37 +625,11 @@
 									"key": "num",
 									"value": "50",
 									"description": "default: 50"
-								}
-							]
-						},
-						"description": "图像为目前二进制，后面会改成地址"
-					},
-					"response": []
-				},
-				{
-					"name": "基金项目 上传",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
+								},
 								{
-									"key": "csv",
-									"description": "标准文件",
-									"type": "file",
-									"src": "/C:/Users/Administrator/Desktop/基金项目.csv"
+									"key": "start",
+									"value": "0"
 								}
-							]
-						},
-						"url": {
-							"raw": "{{URL}}/news/announcement",
-							"host": [
-								"{{URL}}"
-							],
-							"path": [
-								"news",
-								"announcement"
 							]
 						},
 						"description": "图像为目前二进制，后面会改成地址"
@@ -813,33 +750,6 @@
 							"path": [
 								"news",
 								"news"
-							]
-						},
-						"description": "图像为目前二进制，后面会改成地址"
-					},
-					"response": []
-				},
-				{
-					"name": "基金项目 数量",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": []
-						},
-						"url": {
-							"raw": "{{URL}}/news/announcement/total",
-							"host": [
-								"{{URL}}"
-							],
-							"path": [
-								"news",
-								"announcement",
-								"total"
 							]
 						},
 						"description": "图像为目前二进制，后面会改成地址"
@@ -1021,7 +931,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{URL}}/search/teacher?s=张",
+							"raw": "{{URL}}/search/teacher?s=周",
 							"host": [
 								"{{URL}}"
 							],
@@ -1032,10 +942,261 @@
 							"query": [
 								{
 									"key": "s",
-									"value": "张"
+									"value": "周"
 								}
 							]
 						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search EResource",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/search/e-resource?s=畅想之星",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"search",
+								"e-resource"
+							],
+							"query": [
+								{
+									"key": "s",
+									"value": "畅想之星"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Other",
+			"item": [
+				{
+					"name": "E Resource",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/e-resource",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"e-resource"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "E Resource 上传",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "csv",
+									"type": "file",
+									"src": "/C:/Users/Administrator/Desktop/电子资源.csv"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{URL}}/e-resource",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"e-resource"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Index Column Order",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/index/column",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"index",
+								"column"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Index Column Order",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL}}/index/column",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"index",
+										"column"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "plain",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "text/plain; charset=UTF-8"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 23 Apr 2023 13:18:12 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "38"
+								}
+							],
+							"cookie": [],
+							"body": "eResource\nConf\nNews\nCCF\nESIC\nESIH\nLibN"
+						}
+					]
+				},
+				{
+					"name": "Add Index Column Count",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/index/column?n=ESI",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"index",
+								"column"
+							],
+							"query": [
+								{
+									"key": "n",
+									"value": "ESI"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Abandoned",
+			"item": [
+				{
+					"name": "基金项目",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{URL}}/news/announcement?num=1&start=0",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"news",
+								"announcement"
+							],
+							"query": [
+								{
+									"key": "num",
+									"value": "1",
+									"description": "default: 50"
+								},
+								{
+									"key": "start",
+									"value": "0"
+								}
+							]
+						},
+						"description": "图像为目前二进制，后面会改成地址"
+					},
+					"response": []
+				},
+				{
+					"name": "基金项目 数量",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{URL}}/news/announcement/total",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"news",
+								"announcement",
+								"total"
+							]
+						},
+						"description": "图像为目前二进制，后面会改成地址"
+					},
+					"response": []
+				},
+				{
+					"name": "基金项目 上传",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "csv",
+									"description": "标准文件",
+									"type": "file",
+									"src": "/C:/Users/Administrator/Desktop/基金项目.csv"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{URL}}/news/announcement",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"news",
+								"announcement"
+							]
+						},
+						"description": "图像为目前二进制，后面会改成地址"
 					},
 					"response": []
 				}
